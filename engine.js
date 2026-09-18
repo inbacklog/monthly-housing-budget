@@ -16,7 +16,7 @@ function monthNow(){const d=new Date();return d.getFullYear()+'-'+String(d.getMo
 function isMonth(s){return typeof s==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(s)&&Number(s.slice(0,4))>=1900&&Number(s.slice(0,4))<=2199;}
 function isDate(s){if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s)||!isMonth(s.slice(0,7)))return false;const d=new Date(s+'T12:00:00Z');return Number.isFinite(d.valueOf())&&d.toISOString().slice(0,10)===s;}
 function addMonth(s,n){const [y,m]=s.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+n,1));return d.toISOString().slice(0,7);}
-function blank(month=monthNow()){return {version:1,title:'',month,members:[{id:'member1',name:'',role:'adult'}],lines:[],transactions:[],closedMonths:[],settings:{openingCash:0,emergencyFund:0,emergencyMonths:3,extraSaving:0,investPercent:0,annualIncomeGrowth:0,annualExpenseGrowth:0,horizon:12}};}
+function blank(month=monthNow()){return {version:1,title:'',month,members:[{id:'member1',name:'',role:'adult'}],lines:[],transactions:[],closedMonths:[],actualManualMonths:[],settings:{openingCash:0,emergencyFund:0,emergencyMonths:3,extraSaving:0,investPercent:0,annualIncomeGrowth:0,annualExpenseGrowth:0,horizon:12}};}
 function text(x,max=100){if(typeof x!=='string'||x.length>max)throw Error('Invalid text / μη έγκυρο κείμενο');return x;}
 function num(x,min=0,max=MAX_AMOUNT){if(typeof x!=='number'||!Number.isFinite(x)||x<min||x>max)throw Error('Invalid amount / μη έγκυρο ποσό');return x;}
 function bool(x){if(typeof x!=='boolean')throw Error('Invalid boolean');return x;}
@@ -44,6 +44,8 @@ function validate(input){
  }
  p.closedMonths=Array.isArray(input.closedMonths)?[...new Set(input.closedMonths.filter(isMonth))]:[];
  if(p.closedMonths.length>3600)throw Error('Too many months');
+ p.actualManualMonths=Array.isArray(input.actualManualMonths)?[...new Set(input.actualManualMonths.filter(isMonth))]:[];
+ if(p.actualManualMonths.length>3600)throw Error('Too many manually ordered months');
  const s=input.settings||{};for(const k of ['openingCash','emergencyFund','extraSaving'])p.settings[k]=num(s[k]??0);
  p.settings.emergencyMonths=num(s.emergencyMonths??3,0,36);p.settings.investPercent=num(s.investPercent??0,0,100);
  for(const k of ['annualIncomeGrowth','annualExpenseGrowth'])p.settings[k]=num(s[k]??0,-50,50);
@@ -96,23 +98,25 @@ function importCSV(input,base){const rows=parseCSV(input);if(!rows.length)throw 
 }
 function csvEscape(v){let s=String(v??'');if(/^[\s]*[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
 function exportCSV(p){const rows=[CSV_COLS];for(const kind of ['plan','actual'])for(const l of p[kind==='plan'?'lines':'transactions'].filter(l=>kind==='actual'||l.active))rows.push([kind,kind==='plan'?(l.month||''):l.date,l.type,l.label,l.category,l.amount,kind==='plan'?l.frequency:'',l.member?(p.members.find(m=>m.id===l.member)?.name||'Member '+(p.members.findIndex(m=>m.id===l.member)+1)):'',l.essential||false,l.subscription||false,l.funding]);return '\uFEFF'+rows.map(r=>r.map(csvEscape).join(',')).join('\r\n');}
-function anonymize(p,withActual=false){const c=clone(p);c.title='';c.members=c.members.map((m,i)=>({...m,name:'Member '+(i+1)}));c.lines=c.lines.map((l,i)=>({...l,label:l.category+' '+(i+1)}));c.transactions=withActual?c.transactions.map((l,i)=>({...l,label:l.category+' '+(i+1)})):[];if(!withActual)c.closedMonths=[];return c;}
+function anonymize(p,withActual=false){const c=clone(p);c.title='';c.members=c.members.map((m,i)=>({...m,name:'Member '+(i+1)}));c.lines=c.lines.map((l,i)=>({...l,label:l.category+' '+(i+1)}));c.transactions=withActual?c.transactions.map((l,i)=>({...l,label:l.category+' '+(i+1)})):[];if(!withActual){c.closedMonths=[];c.actualManualMonths=[];}return c;}
 function demo(month=monthNow()){
  const p=blank(month);p.title='';p.members=[{id:'member1',name:'',role:'adult'},{id:'member2',name:'',role:'adult'}];
  const defs=[['income','Μισθός / Salary','income',1800,'monthly','member1',false],['income','Μισθός / Salary','income',1200,'monthly','member2',false],['expense','Ενοίκιο / Rent','housing',700,'monthly','',true],['expense','Ρεύμα / Electricity','housing',85,'monthly','',true],['expense','Internet','housing',25,'monthly','',true],['expense','Σούπερ μάρκετ / Groceries','food',360,'monthly','',true],['expense','Μετακινήσεις / Transport','transportation',160,'monthly','',true],['expense','Ασφάλιση / Insurance','insurance',360,'yearly','',true],['expense','Έξοδοι / Going out','entertainment',140,'monthly','',false],['expense','Streaming','subscriptions',12,'monthly','',false],['expense','Υγεία / Health','health',60,'monthly','',true],['expense','Δώρα / Gifts','gifts',30,'monthly','',false],['saving','Αποταμίευση / Savings','savings',250,'monthly','',false],['investment','Επένδυση / Investment','savings',150,'monthly','',false]];
  p.lines=defs.map((a,i)=>({id:'demo'+i,type:a[0],label:a[1],category:a[2],amount:a[3],frequency:a[4],member:a[5],essential:a[6],subscription:a[2]==='subscriptions',active:true,funding:'cash',month:''}));p.settings.openingCash=1500;p.settings.emergencyFund=1000;return p;
 }
 
-/** Reorder visible array slots without changing records or hidden entries. Zero-based target. */
-function reorder(items,visible,source,position){
- if(!Array.isArray(items)||!Array.isArray(visible))throw new TypeError('Lists required');
- const itemIds=items.map(x=>x.id),set=new Set(visible);
- if(set.size!==visible.length||new Set(itemIds).size!==items.length||visible.some(id=>!itemIds.includes(id))||!set.has(source))throw new RangeError('Invalid reorder IDs');
- if(!Number.isInteger(position)||position<0||position>=visible.length)throw new RangeError('Invalid reorder position');
- const ids=visible.filter(id=>id!==source);ids.splice(position,0,source);
- const byId=new Map(items.map(x=>[x.id,x]));let at=0;
- return items.map(x=>set.has(x.id)?byId.get(ids[at++]):x);
+// Reorder only the visible slots. Hidden records never change positions or values.
+// This operates on IDs, not labels, so duplicate descriptions are safe.
+function reorderVisible(records, visibleIds, movingId, destination) {
+ if(!Array.isArray(records)||!Array.isArray(visibleIds))throw Error('Invalid row order');
+ const byId=new Map(records.map(r=>[r.id,r]));
+ const visible=new Set(visibleIds);
+ if(byId.size!==records.length||visible.size!==visibleIds.length||visibleIds.some(id=>!byId.has(id)))throw Error('Invalid row IDs');
+ const from=visibleIds.indexOf(movingId);
+ if(from<0||!Number.isInteger(destination)||destination<0||destination>=visibleIds.length)throw Error('Invalid row position');
+ const ordered=visibleIds.slice();ordered.splice(from,1);ordered.splice(destination,0,movingId);
+ let i=0;return records.map(r=>visible.has(r.id)?byId.get(ordered[i++]):r);
 }
 
-return Object.freeze({reorder,CATEGORIES,TYPES,FREQ,CSV_COLS,MAX_ITEMS,MAX_AMOUNT,blank,demo,clone,id,monthNow,isMonth,isDate,addMonth,validate,equivalent,budget,actual,allocation,forecast,parseCSV,importCSV,exportCSV,anonymize,csvEscape});
+return Object.freeze({reorderVisible,CATEGORIES,TYPES,FREQ,CSV_COLS,MAX_ITEMS,MAX_AMOUNT,blank,demo,clone,id,monthNow,isMonth,isDate,addMonth,validate,equivalent,budget,actual,allocation,forecast,parseCSV,importCSV,exportCSV,anonymize,csvEscape});
 });

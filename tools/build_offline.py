@@ -8,7 +8,7 @@ import mimetypes
 import sys
 
 BASE = Path(__file__).resolve().parents[1]
-VERSION = '1.1.1'
+VERSION = '1.2.1'
 
 def data_uri(relative: str) -> str:
     path = BASE / relative
