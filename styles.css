@@ -114,3 +114,17 @@ footer{padding-bottom:105px!important}
 .record-row.row-dragging>td{background:var(--soft)!important}
 @media(max-width:600px){.row-color-tools{align-items:flex-start}.type-legend{min-width:100%;order:2}.row-color-select{width:100%;justify-content:space-between}.row-color-select select{min-width:150px}.row-color-note{order:3}.legend-chip{font-size:9px}}
 @media print{.row-color-tools{display:none!important}.record-row>td{background:white!important}.record-row>td:first-child{box-shadow:none!important}}
+
+/* v1.4 • investment projection, notes, missing-expense suggestions and stronger household CTA */
+.household-btn{background:color-mix(in srgb,var(--primary) 12%,var(--surface));border-color:color-mix(in srgb,var(--primary) 42%,var(--line));color:var(--primary);font-weight:700;box-shadow:0 2px 10px color-mix(in srgb,var(--primary) 10%,transparent)}
+.household-btn:hover{background:color-mix(in srgb,var(--primary) 18%,var(--surface));border-color:var(--primary)}
+.household-btn:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 35%,transparent);outline-offset:2px}
+.notes-head{min-width:180px}.notes-cell{min-width:180px}.note-inline{min-width:165px;width:100%;padding:7px 9px!important;font-size:11px!important;background:color-mix(in srgb,var(--surface) 82%,var(--soft) 18%)!important}
+.record-note{display:block!important;margin-top:5px!important;padding:4px 6px;border-radius:6px;background:color-mix(in srgb,var(--primary) 8%,transparent);color:var(--muted)!important;font-weight:450!important;max-width:280px;white-space:normal;overflow-wrap:anywhere}
+.settings-block{border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:13px;background:color-mix(in srgb,var(--surface) 94%,var(--soft) 6%)}
+.settings-block:first-child{margin-top:0}.settings-block h3{font-size:13px;margin:0 0 11px;color:var(--ink)}.settings-block>.hint{margin:-2px 0 12px;display:block}
+.investment-settings{border-color:color-mix(in srgb,#8d78aa 38%,var(--line));background:color-mix(in srgb,#8d78aa 6%,var(--surface))}
+.investment-projection{border-color:color-mix(in srgb,#8d78aa 28%,var(--line))}.investment-chart{height:245px}
+.entry-suggestions .quick-heading h3{margin-bottom:2px}.entry-suggestions .quick-heading .hint{max-width:330px;text-align:right}
+@media(max-width:720px){.notes-head,.notes-cell{min-width:150px}.note-inline{min-width:135px}.investment-chart{height:220px}.household-btn{order:-1}.toolbar-actions{align-items:center}}
+@media(max-width:520px){.household-btn{font-size:11px!important;padding-inline:10px!important}.settings-block{padding:12px}.notes-head,.notes-cell{min-width:140px}.note-inline{min-width:125px}.entry-suggestions .quick-heading .hint{text-align:left;max-width:none}}

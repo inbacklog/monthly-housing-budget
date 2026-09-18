@@ -1,4 +1,13 @@
-# Homeflow v1.3.0
+# Homeflow v1.4.0
+
+## v1.4.0 highlights
+
+- Investment projections now support an editable assumed annual return (default **7%**) and optional existing invested balance. Investment value is projected separately from household cash so returns are never double-counted in the budget.
+- My Budget entries have optional **Notes** (up to 240 characters), editable directly from the table and from the entry form. Notes do not affect calculations.
+- New expense-entry suggestions prioritise common expenses that are **not yet present** in the current budget. No amounts are suggested.
+- The Household / people control is more prominent in the main toolbar.
+- Existing v1 saved budgets remain compatible: missing investment settings default to 0 existing balance and 7% assumed return, and old records receive an empty note.
+
 
 ## New in this release
 
@@ -65,7 +74,7 @@ underlying expenses. Category tiles are computed summaries, not extra budget row
 2. Replace the website files with all files from this package in the same repo root.
 3. Keep the same repository, Pages path and storage. Do not clear browser site data.
 4. Commit the files and reopen/reload the published site after deployment.
-5. Check the footer says **v1.3.0**. The JSON schema and local-storage key are unchanged.
+5. Check the footer says **v1.4.0**. The JSON schema and local-storage key are unchanged.
 
 The package is complete, not a patch. No live repository was modified by creating it.
 

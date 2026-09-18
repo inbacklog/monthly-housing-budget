@@ -1,3 +1,12 @@
+# v1.4.0
+
+- Add editable investment-return assumption (default 7%) and optional existing invested balance.
+- Project investment value separately from household cash, including contributions and modelled gain/loss.
+- Add optional per-entry notes with an inline Notes column in My Budget.
+- Prioritise common expense suggestions that are not yet present in the current budget.
+- Make the Household / people button more visually prominent.
+- Keep older saved Homeflow v1 budgets compatible through defaults for new fields.
+
 # v1.3.0
 
 - Replace both support QR assets with the owner-supplied original PNGs, byte for byte.

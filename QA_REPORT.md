@@ -1,36 +1,34 @@
-# Homeflow v1.3.0 — verification report
+# Homeflow v1.4.0 — verification report
 
-## Change
+## Scope
 
-This release adds optional, type-aware row colouring to Budget and Actuals.
+This release adds investment-return projections, optional existing invested capital, per-budget-entry notes, missing-expense suggestions, and a stronger Household control. It preserves the Homeflow v1 storage key and schema version so existing browser data can migrate through validation defaults.
 
-- Income: soft green.
-- Expense: soft coral.
-- Saving: soft blue.
-- Investment: soft violet.
-- Display modes: **Soft**, **Scale by amount**, **No colour**.
-- Scale by amount compares each row only with the average amount of the same type. Budget values use monthly equivalents; Actuals compare transactions in the selected month.
-- Text type labels remain visible, so colour is never the only indicator.
-- The display preference is browser-local and is not encoded into shared financial links.
+## Automated checks
 
-## Compatibility
+A total of **347 automated checks / test groups** passed across the calculation engine, preset catalogue, ordering, copy/navigation, row colouring, scoped-entry UI, general browser behaviour, usability flows, offline standalone build, QR byte integrity, packaging, and new v1.4 flows.
 
-Budget schema and local-storage key are unchanged. Row order, calculations, exports, sharing payloads and drag-and-drop behaviour are unchanged.
+Key v1.4-specific checks include:
 
-The supplied Buy Me a Coffee and Wallet of Satoshi QR image files are retained byte-for-byte as the packaged assets.
+- legacy saved budgets receive `investmentStart = 0`, `investmentReturn = 7`, and empty notes without reset;
+- investment growth is compounded separately from available cash;
+- 0% investment return equals starting invested balance plus contributions;
+- notes survive validation and are scrubbed by anonymised sharing;
+- Notes column saves inline edits;
+- new expense suggestions exclude already-recognised budget items;
+- default investment return is 7% and is editable;
+- the future view shows projected investment value and modelled gain/loss;
+- the Wealth Goal Planner link carries existing invested balance, monthly contribution and assumed return;
+- mobile Plan view remains within the viewport;
+- the Household button is visually distinct;
+- both user-supplied QR PNG files remain byte-exact in the package and standalone build.
 
-## Automated verification
+## Calculation model for investments
 
-The existing calculation, presets, ordering, package, browser-flow, copy, usability, QR and offline smoke suites were run together with a new colour-specific Chromium suite. Across those suites, **327 checks/test groups passed**. The colour suite additionally verified:
+Investment return is an **assumption, not a forecast**. The app converts the annual effective return into a monthly factor and applies it to the separate investment balance, then adds that month’s investment contribution. Household available cash is not increased by investment gains. The projection does not model taxes, investment fees, volatility, or sequence-of-returns risk.
 
-- different tints for income and expense;
-- stronger tint for a higher same-type amount;
-- browser persistence of the display preference;
-- no-colour mode;
-- dark-theme compatibility;
-- mobile width at 390 px;
-- no uncaught script errors.
+## Test environment / limits
 
-## Limits
+UI tests used headless Chromium with simulated viewport sizes including 320, 390, 768 and 1440 CSS pixels. Touch behaviour is simulated where covered by the existing suite. The live GitHub Pages deployment and persistence/install behaviour on a physical Android or iPhone were **not** tested in this environment.
 
-Automated UI checks use Chromium in this environment. No physical iPhone/Android device, Safari/WebKit installation or production GitHub Pages deployment was tested.
+Before replacing a live deployment, keep a private JSON backup of the current browser data.
