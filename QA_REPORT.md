@@ -1,72 +1,100 @@
-# Homeflow v1.1.1 — verification report
+# Homeflow v1.2.0 — QA and compatibility report
 
-## Scope
+## Release scope
 
-This is a user-facing wording update, based on the complete v1.1.0 package.
-29 Greek/English text pairs were revised. No new financial assumptions or
-features were introduced. References to private prefilled amounts, development
-decisions and publication steps were removed from the visitor interface.
-Practical instructions, data-loss confirmations, incomplete-month warnings,
-sharing consent and the limits of the calculations are retained.
+Built from the complete v1.1.1 package in this conversation. Changes are row
+ordering and ease of entry, not a new financial model. No repository or live
+website has been modified.
 
-## Executed checks on this release
+### Added and verified
 
-| Suite | Passing groups / assertions |
+- Dedicated left-hand drag handles in Budget and Actuals. Mouse and emulated
+  touchscreen moves, drop indicator, drag ghost, edge autoscroll and cancellation.
+- Tap-to-position dialog plus ArrowUp/ArrowDown/Home/End keyboard alternatives.
+  Focus follows a keyboard move. Undo restores the previous order.
+- Filtered moves reorder only visible slots: hidden rows, amounts, IDs,
+  descriptions, categories, funding, person assignment and pause flags remain
+  intact. Sorting actuals does not change dates or completed-month flags.
+- Actual transaction order can be customized per month; Date ↓ restores date
+  ordering. Other months' stored records are not moved by a filtered move.
+- Persistent + Add entry button with Budget/Actuals context and four types.
+  Add-entry buttons also appear at the end of each list.
+- Entry type first, followed by amount and matching description suggestions.
+  Income does not show expense suggestions. Type changes preserve the amount,
+  person and date; description/category drafts return when switching back.
+- Decimal comma in inline list editing as well as entry and batch forms.
+- Nonmodal quick-add and donation panels do not overlap. The fixed buttons stay
+  separate on small screens. No automatic price, income or expense is inserted.
+
+## Automated results
+
+| Suite | Passed named checks / groups |
 | --- | ---: |
 | Calculation engine (`node tests/engine.test.js`) | 40 |
-| Presets and atomic batch edits (`node tests/presets.test.js`) | 30 |
-| Package / static service-worker checks (`node tests/package.test.js`) | 14 |
-| Existing browser regression suite (`python tests/browser.test.py`) | 63 |
+| Presets and batch edits (`node tests/presets.test.js`) | 30 |
+| Row-order data invariants (`node tests/order.test.js`) | 17 |
+| Packaging and static service-worker checks (`node tests/package.test.js`) | 14 |
+| Existing browser flows (`python tests/browser.test.py`) | 63 |
 | Guided-entry usability (`python tests/usability.test.py`) | 57 |
-| Actual standalone HTML smoke checks (`python tests/offline.test.py <HTML>`) | 12 |
-| New Greek/English copy regression (`python tests/copy.test.py`) | 42 |
+| Greek/English copy regression (`python tests/copy.test.py`) | 42 |
+| New ordering/quick-add/type-first interactions (`python tests/interactions.test.py`) | 68 |
+| Actual standalone HTML (`python tests/offline.test.py <HTML>`) | 12 |
+| **Total** | **343** |
 
-All the suites above were rerun for v1.1.1. JavaScript syntax checks also passed.
+A named check/group may include several assertions or randomized invariants;
+343 is not a claim of 343 separate devices or browser configurations. All suites
+passed. JavaScript syntax checks passed for the shipped source. A final rerun
+of interactions and the built offline HTML also passed after tightening the
+Undo/storage-failure feedback.
 
-The new copy suite checks the empty welcome, all five sections in Greek and
-English, the example confirmation and label, sharing consent, the generated
-link destination, import instructions and privacy notices. It verifies the
-removed messages do not exist in runtime source or tested visible text.
+Responsive checks cover widths 320, 390, 768 and 1440 px, Greek and English,
+light/dark UI, compact menus and input dialogs. Screenshots of the actual
+rendered desktop table, mobile form and dark quick-add menu were inspected.
 
-Existing UI suites cover expense shortcuts, arbitrary descriptions and custom
-categories, decimal comma/point, quick monthly setup, duplicate warnings,
-actual transactions, CSV import, JSON backup, sharing and the support panel.
-Responsive checks ran at 320, 390, 768 and 1440 px in Chromium.
-The new welcome screenshots were visually inspected at 390 and 1440 px.
+Pointer tests used Chromium CDP `Input.dispatchTouchEvent` to exercise real
+emulated touch events, including interrupted gestures. This is stronger than
+calling a sorting function directly, but it is still not a physical-phone test.
 
-## Compatibility and preservation
+## Compatibility and data protection
 
-A comparison against the v1.1.0 ZIP verified that `app.js` differs only inside
-bilingual text calls: after replacing their literal text with markers, both
-files are identical. Thus UI control flow, calculations and stored values were
-not modified.
+- `homeflow:budget:v1` is retained. There is no `localStorage.clear()` or reset.
+- JSON schema stays at version 1 with an optional `actualManualMonths` array.
+  Old backups without it are accepted and default to date ordering for actuals.
+- Budget order lives in the existing `lines` array. Custom actual order lives in
+  `transactions`, with the month flag deciding whether to apply date sorting.
+- JSON backup/restore and new shared snapshots preserve the order. Excluding
+  actuals from sharing also removes their ordering metadata.
+- Previously saved amounts and categories remain valid. The financial formulas
+  were not changed. Tests compare totals/forecasts before and after sorting.
+- The suggestion catalogue, manifest, all three templates and both donation QR
+  images match v1.1.1 byte-for-byte. No personal workbook or filled budget is
+  included in the public package.
+- Cache version is `homeflow-static-v1.2.0`; cleanup is still restricted to the
+  Homeflow cache prefix. This does not clear saved budgets or other apps' caches.
 
-Byte-for-byte comparisons also confirmed these remain unchanged:
+## Important test limits
 
-- `engine.js`, `presets.js` and `styles.css`.
-- `manifest.webmanifest` and its project-relative scope.
-- The blank Excel template and both donation QR assets.
+The environment blocked HTTP browser navigation, including localhost. Browser
+suites therefore used inline local assets and an in-memory Storage adapter.
+Reloading the app with that adapter verifies serialization/readback and order
+preservation, not persistence after a real browser or OS restart. The standalone
+smoke test used the actual generated HTML in a storage-denied context.
 
-The storage key is still `homeflow:budget:v1` and the budget JSON schema is still
-version 1. The offline asset cache is now `homeflow-static-v1.1.1`. Cache cleanup
-remains restricted to this app; saved budgets are not cleared by the update.
+No live GitHub Pages deployment, real service-worker upgrade, Safari/WebKit,
+physical Android/iPhone, screen-reader audit, native OS clipboard/share dialog,
+real-browser restart, donation or payment was tested. No WCAG conformance claim
+is made. Pointer cancellation, keyboard alternatives and tap-to-position were
+implemented and tested for practical accessibility.
 
-## Test limitations
+Technical references used for implementation:
+- https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
+- https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture
+- https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html
 
-Browser suites used Playwright/Chromium with inline local assets and an
-in-memory Storage adapter. The standalone smoke test loaded the actual
-standalone HTML in a storage-denied context. These are not proof of real-device
-persistence or an end-to-end PWA update.
+## Updating
 
-Hosted deployment, real browser restarts, native Android/iPhone installation,
-Safari/WebKit, OS clipboard/share permissions and live service-worker updates
-were not tested. No repository was changed and no donation or payment was made.
-The supplied ZIP is a release package for manual replacement of the website
-files.
-
-## Before updating the public app
-
-Keep a private JSON backup from the existing app. Replace the site files in the
-same repository directory, retain the current Pages settings, and check the
-footer shows v1.1.1 after deployment. Do not clear browser data. Confirm your
-saved entries remain available. Keep personal backups outside the public repo.
+Download a private JSON backup first. Replace matching website files in the
+same repository root, keeping the current Pages path and settings. Do not clear
+browser site data. After deployment, reload and check for v1.2.0 in the footer.
+Verify a drag, a saved order after reopening, a new income and a new expense on
+an actual phone. Keep personal JSON/CSV/Excel files out of the public repository.

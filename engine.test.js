@@ -1,0 +1,47 @@
+'use strict';
+const assert=require('node:assert/strict'),E=require('../engine.js');let checks=0;
+function test(name,fn){try{fn();console.log('PASS '+name);checks++;}catch(e){console.error('FAIL '+name);throw e;}}
+function near(a,b){assert.ok(Math.abs(a-b)<1e-6,`${a} != ${b}`);}
+function line(overrides={}){return {id:E.id(),type:'expense',label:'Test',category:'housing',member:'',amount:120,frequency:'monthly',month:'',essential:true,subscription:false,active:true,funding:'cash',...overrides};}
+function plan(lines=[]){const p=E.blank('2026-01');p.lines=lines;return p;}
+test('Empty budget is zero and has one member',()=>{const p=E.blank();assert.equal(p.members.length,1);assert.equal(E.budget(p).income,0);assert.equal(E.budget(p).unassigned,0);});
+test('Monthly conversion',()=>near(E.equivalent(line(),'2026-01'),120));
+test('Yearly conversion',()=>near(E.equivalent(line({frequency:'yearly'}),'2026-01'),10));
+test('Quarterly conversion',()=>near(E.equivalent(line({frequency:'quarterly'}),'2026-01'),40));
+test('Weekly uses 52/12, not four weeks',()=>near(E.equivalent(line({frequency:'weekly'}),'2026-01'),520));
+test('14 salary averages',()=>near(E.equivalent(line({type:'income',frequency:'salary14',amount:1200}),'2026-01'),1400));
+test('One-off only occurs in its own month',()=>{const l=line({frequency:'once',month:'2026-02'});near(E.equivalent(l,'2026-01'),0);near(E.equivalent(l,'2026-02'),120);});
+test('Paused entry is excluded',()=>near(E.equivalent(line({active:false}),'2026-01'),0));
+test('Savings not counted as living expenses',()=>{const p=plan([line({type:'income',amount:1000}),line({amount:500}),line({type:'saving',amount:100}),line({type:'investment',amount:50})]);const b=E.budget(p);near(b.expenses,500);near(b.saving,100);near(b.investment,50);near(b.unassigned,350);});
+test('Extra allocation does not double count investments',()=>{const p=plan([line({type:'income',amount:1000}),line({amount:500}),line({type:'investment',amount:100})]);Object.assign(p.settings,{extraSaving:100,investPercent:50});const a=E.budget(p).allocation;near(a.extraSaving,100);near(a.extraInvestment,150);near(a.investment,250);near(a.remaining,150);});
+test('Deficit does not create investable money',()=>{const p=plan([line({amount:500})]);p.settings.investPercent=100;p.settings.extraSaving=100;const a=E.budget(p).allocation;near(a.extraInvestment,0);near(a.extraSaving,0);near(a.remaining,-500);assert.equal(a.feasible,false);});
+test('Additional savings is capped at surplus',()=>{const p=plan([line({type:'income',amount:100})]);p.settings.extraSaving=500;const a=E.budget(p).allocation;near(a.extraSaving,100);near(a.remaining,0);});
+test('Benefits and mixed income excluded from investable cash',()=>{const p=plan([line({type:'income',amount:800}),line({type:'income',amount:100,funding:'benefit'}),line({type:'income',amount:70,funding:'mixed'}),line({funding:'benefit',amount:80})]);const b=E.budget(p);near(b.income,800);near(b.benefitIncome,100);near(b.benefitExpenses,80);near(b.mixedIncome,70);near(b.unassigned,800);});
+test('Member count never multiplies budget',()=>{const p=plan([line({amount:100})]);for(let i=0;i<19;i++)p.members.push({id:'p'+i,name:'',role:'child'});near(E.budget(E.validate(p)).expenses,100);});
+test('Actuals not added to planned values',()=>{const p=plan([line({amount:100})]);p.transactions=[{id:'tx',type:'expense',label:'Test',category:'housing',member:'',amount:50,date:'2026-01-15',funding:'cash'}];near(E.budget(p).expenses,100);near(E.actual(p).expenses,50);assert.equal(E.actual(p).closed,false);});
+test('Actual month isolation',()=>{const p=plan();p.transactions=[{id:'tx',type:'expense',label:'Test',category:'food',amount:100,date:'2026-02-01',funding:'cash',member:''}];near(E.actual(p).expenses,0);near(E.actual(p,'2026-02').expenses,100);});
+test('Missing actual income is flagged',()=>{assert.equal(E.actual(plan()).hasIncome,false);});
+test('Forecast unassigned accumulates separately from transfers',()=>{const p=plan([line({type:'income',amount:1000}),line({amount:500}),line({type:'saving',amount:100}),line({type:'investment',amount:100})]);p.settings.openingCash=100;const r=E.forecast(p).at(-1);near(r.cash,3700);near(r.totalSaved,1200);near(r.totalInvested,1200);});
+test('Forecast flags negative cash, does not clamp',()=>{const p=plan([line({amount:100})]);const r=E.forecast(p).at(-1);near(r.cash,-1200);assert.ok(r.unfunded>0);});
+test('Forecast income growth compounded monthly',()=>{const p=plan([line({type:'income',amount:1000})]);Object.assign(p.settings,{annualIncomeGrowth:10,horizon:13});const r=E.forecast(p);near(r[0].income,1000);near(r[12].income,1100);});
+test('Forecast one-off does not repeat',()=>{const p=plan([line({frequency:'once',month:'2026-03',amount:500})]);near(E.forecast(p).reduce((s,r)=>s+r.expenses,0),500);});
+test('10% discretionary scenario leaves essential spending alone',()=>{const p=plan([line({amount:100,essential:true}),line({amount:100,essential:false})]);near(E.forecast(p,{flexCut:10})[0].expenses,190);});
+test('Subscription subset is not additional expense',()=>{const p=plan([line({subscription:true})]);const b=E.budget(p);near(b.expenses,120);near(b.subscriptions,120);});
+test('January and December rollovers',()=>{assert.equal(E.addMonth('2026-12',1),'2027-01');assert.equal(E.addMonth('2026-01',-1),'2025-12');});
+test('Invalid dates are rejected rather than rolled over',()=>{assert.equal(E.isDate('2026-02-30'),false);assert.equal(E.isDate('2024-02-29'),true);});
+test('Negative and non-finite inputs rejected',()=>{assert.throws(()=>E.validate(plan([line({amount:-1})])));assert.throws(()=>E.validate(plan([line({amount:NaN})])));});
+test('Duplicate IDs and unknown member rejected',()=>{assert.throws(()=>E.validate(plan([line({id:'same'}),line({id:'same'})])));assert.throws(()=>E.validate(plan([line({member:'unknown'})])));});
+test('Salary14 only applies to income',()=>assert.throws(()=>E.validate(plan([line({frequency:'salary14'})]))));
+test('Transfers cannot use restricted benefits',()=>assert.throws(()=>E.validate(plan([line({type:'investment',funding:'benefit'})]))));
+test('Mixed funding only allowed for income',()=>assert.throws(()=>E.validate(plan([line({funding:'mixed'})]))));
+test('Valid JSON round trip',()=>{const p=E.demo('2026-01');assert.deepEqual(E.validate(JSON.parse(JSON.stringify(p))),p);});
+test('Names, descriptions and transactions scrubbed by default',()=>{const p=E.demo();p.title='Private';p.members[0].name='Personal name';p.lines[0].label='Employer';const a=E.anonymize(p);assert.equal(a.title,'');assert.equal(a.members[0].name,'Member 1');assert.ok(!JSON.stringify(a).includes('Employer'));assert.equal(a.transactions.length,0);});
+test('CSV BOM, semicolon and decimal comma',()=>{const input=E.CSV_COLS.join(';')+'\r\nplan;;expense;Groceries;food;12,50;monthly;;true;false;cash\r\n';const out=E.importCSV('\ufeff'+input,E.blank());near(out.state.lines[0].amount,12.5);});
+test('CSV quotes, commas and linebreaks',()=>{const input=E.CSV_COLS.join(',')+'\nplan,,expense,"Text, with ""quotes""\nand newline",food,25,monthly,,false,false,cash';const out=E.importCSV(input,E.blank());assert.equal(out.state.lines[0].label,'Text, with "quotes"\nand newline');});
+test('CSV all-or-nothing validation',()=>{const base=E.blank(),input=E.CSV_COLS.join(',')+'\nplan,,expense,Good,food,25,monthly,,true,false,cash\nplan,,expense,Bad,food,no,monthly,,true,false,cash';assert.throws(()=>E.importCSV(input,base));assert.equal(base.lines.length,0);});
+test('CSV missing/wrong headers and quotes rejected',()=>{assert.throws(()=>E.importCSV('wrong,header\na,b',E.blank()));assert.throws(()=>E.parseCSV('a,"b'));});
+test('CSV adds named members and preserves other data',()=>{const p=E.demo();const out=E.importCSV(E.CSV_COLS.join(',')+'\nactual,2026-01-01,expense,Coffee,food,2,,Housemate,false,false,cash',p);assert.equal(out.state.transactions.length,1);assert.equal(out.state.members.length,3);assert.equal(out.state.lines.length,p.lines.length);});
+test('CSV exported text neutralizes spreadsheet formulas',()=>{assert.equal(E.csvEscape('=SUM(A1)'), '"\'=SUM(A1)"');assert.equal(E.csvEscape(' @cmd'), '"\' @cmd"');});
+test('Prototype-like category is a safe dictionary key',()=>{const b=E.budget(plan([line({category:'__proto__'})]));near(b.categories['__proto__'],120);near(b.expenses,120);});
+test('Hundred deterministic allocation invariants',()=>{for(let i=0;i<100;i++){const p=plan([line({type:'income',amount:1000+i*17}),line({amount:50+i*8}),line({type:'saving',amount:i*2}),line({type:'investment',amount:i*3})]);p.settings.extraSaving=i*2;p.settings.investPercent=i;const b=E.budget(p),a=b.allocation;near(b.income-b.expenses-b.saving-b.investment-a.extraSaving-a.extraInvestment,a.remaining);assert.ok(a.extraInvestment>=0);}});
+console.log(`\n${checks} test groups passed.`);

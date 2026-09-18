@@ -1,9 +1,20 @@
-# Homeflow 1.1.1 — household budget planner
+# Homeflow 1.2.0 — household budget planner
 
-## v1.1.1 update
+## v1.2.0 update
 
-User-facing Greek and English copy is simpler and task-focused. Development-context messages have been removed from the welcome, example, entry guidance, backup and sharing flows. Existing expense shortcuts, custom entries, calculations and saved budgets are unchanged.
-
+- Reorder budget rows by dragging the left grip with a mouse or touch input.
+  Actual transactions can also be reordered within each selected month.
+- Tap a grip to choose any visible position without dragging; keyboard
+  Up/Down, Home and End also work. A short-lived Undo restores the previous order.
+- A fixed **+ Add entry** button opens a compact Budget / Actuals chooser with
+  Income, Expense, Saving and Investment. Another add button appears at the end
+  of each list.
+- Entry type is the first visible form control. The amount follows, then
+  type-specific suggestions. Changing types keeps the amount/person/date and
+  restores the description draft when returning to the previous type.
+- Decimal commas also work in inline budget-list amounts.
+- Calculation formulas, presets, templates, donation QR codes and storage key
+  remain unchanged. No automatic entries or preset personal amounts are added.
 
 A local-first, bilingual (Greek / English) household budget app for **one person or a larger household**. Mobile-friendly. Static HTML/CSS/JavaScript; no npm, build server, account, API key or database required.
 
@@ -38,9 +49,26 @@ underlying expenses. Category tiles are computed summaries, not extra budget row
 2. Replace the website files with all files from this package in the same repo root.
 3. Keep the same repository, Pages path and storage. Do not clear browser site data.
 4. Commit the files and reopen/reload the published site after deployment.
-5. Check the footer says **v1.1.1**. The JSON schema and local-storage key are unchanged.
+5. Check the footer says **v1.2.0**. The storage key and JSON schema version remain unchanged; old backups are accepted.
 
 The package is complete, not a patch. No live repository was modified by creating it.
+
+## Row order and compatibility
+
+The budget's `lines` array stores the chosen order. With filters active, only
+visible slots are reordered; hidden rows keep their positions. Amounts,
+categories, IDs and member assignments are not altered.
+
+Actuals remain date-descending until the user manually sorts a month. An
+optional `actualManualMonths` array in version-1 JSON tracks which months use
+their stored array order. Old backups without it default to `[]`. The Date ↓
+button restores chronological presentation for that month. Sorting does not
+reopen completed months because it does not edit transactions.
+
+JSON backups and new shared snapshots preserve order. Actuals and their ordering
+metadata are omitted from shared links unless explicitly included. An older
+app can still read financial records but may ignore this optional ordering
+metadata; use the new release on receiving devices as well.
 
 ## Start
 
@@ -158,3 +186,14 @@ The browser suite uses Playwright and Chromium, not required for end users. Read
 - GitHub Pages: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 
 These are general educational references, not Greek tax rules, individualized recommendations, or endorsements of the app.
+
+## v1.2 interaction test commands
+
+```sh
+node tests/order.test.js
+python tests/interactions.test.py
+python tools/build_offline.py Homeflow_Offline.html
+python tests/offline.test.py Homeflow_Offline.html
+```
+
+See `QA_REPORT.md` for the full suite and test limitations.

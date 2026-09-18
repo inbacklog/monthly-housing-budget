@@ -1,3 +1,24 @@
+# Homeflow 1.2.0
+
+## New
+- Pointer-event row dragging on dedicated handles, including emulated touch coverage.
+- Tap-to-position alternative, keyboard movement, edge scrolling, drop indicator and Undo.
+- Stored budget order; manual per-month actual order and explicit date-sort reset.
+- Filtering preserves hidden record slots. Sorting preserves amounts, IDs and completed-month flags.
+- Fixed + Add entry popover with Budget/Actuals context and income/expense shortcuts.
+- Add-another buttons at the end of both lists.
+- Type-first form buttons; amount before the description catalogue.
+- Suggestions follow type; separate description drafts are restored when switching back.
+- Decimal-comma support in inline budget amounts.
+
+## Compatibility
+- Keeps `homeflow:budget:v1` and version-1 JSON; adds optional `actualManualMonths`.
+- Old backups are accepted; new JSON and shared links preserve row order.
+- No financial calculation formula, preset, template, support address or QR changes.
+- Cache version bumped to 1.2.0; no saved-data clearing.
+
+---
+
 # Homeflow 1.1.1
 
 - Refined 29 bilingual UI text pairs in the welcome, example, entry guidance, files, sharing and privacy screens.
