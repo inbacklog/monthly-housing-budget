@@ -1,94 +1,72 @@
-# Homeflow v1.1.0 — verification report
+# Homeflow v1.1.1 — verification report
 
-This report describes checks actually run on the final v1.1.0 files.
+## Scope
 
-## Executed in the authoring environment
+This is a user-facing wording update, based on the complete v1.1.0 package.
+29 Greek/English text pairs were revised. No new financial assumptions or
+features were introduced. References to private prefilled amounts, development
+decisions and publication steps were removed from the visitor interface.
+Practical instructions, data-loss confirmations, incomplete-month warnings,
+sharing consent and the limits of the calculations are retained.
 
-| Suite | Passed |
+## Executed checks on this release
+
+| Suite | Passing groups / assertions |
 | --- | ---: |
-| Original calculation-engine test groups | 40 |
-| New preset / atomic-batch test groups | 30 |
-| Original UI regression assertions (Chromium) | 63 |
-| New guided-entry / usability assertions (Chromium) | 57 |
-| Package / static service-worker assertions | 14 |
-| Actual standalone-HTML smoke assertions | 12 |
+| Calculation engine (`node tests/engine.test.js`) | 40 |
+| Presets and atomic batch edits (`node tests/presets.test.js`) | 30 |
+| Package / static service-worker checks (`node tests/package.test.js`) | 14 |
+| Existing browser regression suite (`python tests/browser.test.py`) | 63 |
+| Guided-entry usability (`python tests/usability.test.py`) | 57 |
+| Actual standalone HTML smoke checks (`python tests/offline.test.py <HTML>`) | 12 |
+| New Greek/English copy regression (`python tests/copy.test.py`) | 42 |
 
-The original calculation engine is unchanged. Its existing tests include 100
-deterministic allocation-invariant cases inside the reported groups.
+All the suites above were rerun for v1.1.1. JavaScript syntax checks also passed.
 
-### New data and calculation coverage
+The new copy suite checks the empty welcome, all five sections in Greek and
+English, the example confirmation and label, sharing consent, the generated
+link destination, import instructions and privacy notices. It verifies the
+removed messages do not exist in runtime source or tested visible text.
 
-- No prices or household personal data in the suggestion catalogue.
-- 61 expense descriptions and 9 income/saving/investment descriptions; unique IDs.
-- Greek accent/case normalization, English search, provider search aliases and category filters.
-- Legacy bilingual labels recognised without duplicating matching quick-entry suggestions.
-- Decimal comma and decimal point; zero versus blank; invalid and oversized inputs.
-- Atomic multi-entry creation and updates, with no mutation of the source on errors.
-- Existing IDs, people, funding, flags, paused rows and one-off dates preserved.
-- Blank/zero new rows skipped; existing zero updates, blank existing amount unchanged.
-- Existing custom categories and higher-precision imported values preserved.
-- Income, savings, investment, actual transactions and complete-month flags untouched by budget batches.
-- Updated data still validates under JSON schema 1 and works with the existing CSV format.
+Existing UI suites cover expense shortcuts, arbitrary descriptions and custom
+categories, decimal comma/point, quick monthly setup, duplicate warnings,
+actual transactions, CSV import, JSON backup, sharing and the support panel.
+Responsive checks ran at 320, 390, 768 and 1440 px in Chromium.
+The new welcome screenshots were visually inspected at 390 and 1440 px.
 
-### New UI coverage
+## Compatibility and preservation
 
-- Visible shortcuts in Budget and Actuals; no suggested price inserted.
-- Changing a suggestion retains the entered amount, person, frequency and actual date.
-- Empty amounts rejected; arbitrary descriptions and user-chosen amounts accepted.
-- Possible duplicate warning, no save until acknowledged, intentional overrides allowed.
-- Save & add another records once and opens a blank amount/description.
-- Catalogue search and subscriptions; search Enter does not submit a financial entry.
-- Category summaries and filtering; no separate category-total charges added.
-- Actual-only entries and full-catalogue selection stay separate from budget entries.
-- Moving an actual payment reopens completion flags for both affected months.
-- Batch preview, monthly conversions, review/consent gate, hidden-draft retention,
-  correct existing-ID updates, cancellation and invalid-input safety.
-- UI reload reads the prior v1 JSON unchanged through a storage adapter.
-- Unrelated applications' storage remains untouched.
-- Greek/English and light/dark rendering, compact nonmodal support panel.
-- Horizontal layout checks on plan, actuals, entry dialogs and the batch editor at
-  320, 390, 768 and 1440 px. Screenshots visually inspected at mobile and desktop sizes.
-- No uncaught JavaScript exceptions in these tested flows.
+A comparison against the v1.1.0 ZIP verified that `app.js` differs only inside
+bilingual text calls: after replacing their literal text with markers, both
+files are identical. Thus UI control flow, calculations and stored values were
+not modified.
 
-### Package and standalone coverage
+Byte-for-byte comparisons also confirmed these remain unchanged:
 
-- Scripts and styles load from local files; presets load before the UI.
-- All referenced assets exist; the manifest retains the same project-relative scope.
-- New cache version includes presets and the blank Excel template, excludes other projects.
-- Local storage key `homeflow:budget:v1` and schema 1 retained; no clear-all call.
-- Private household workbook is absent; only the blank import template is included.
-- Generated standalone has no external script/style dependencies or test instrumentation.
-- Standalone scripts run after DOM elements exist; expense and batch entry work.
-- Storage-denied warnings display instead of falsely claiming saved data.
-- Embedded Excel template is byte-identical; both QR images load from embedded data.
+- `engine.js`, `presets.js` and `styles.css`.
+- `manifest.webmanifest` and its project-relative scope.
+- The blank Excel template and both donation QR assets.
 
-## Limitations — not claimed as tested
+The storage key is still `homeflow:budget:v1` and the budget JSON schema is still
+version 1. The offline asset cache is now `homeflow-static-v1.1.1`. Cache cleanup
+remains restricted to this app; saved budgets are not cleared by the update.
 
-Browser navigation to localhost HTTP is blocked by environment policy
-(`ERR_BLOCKED_BY_ADMINISTRATOR`). UI suites therefore use Playwright `set_content`
-with inline local assets. The regression suites use an in-memory Storage adapter.
-This checks application behavior, not actual cross-restart browser persistence.
-The standalone smoke test uses the real saved HTML, without test instrumentation,
-in a storage-denied context.
+## Test limitations
 
-Service-worker checks are package/unit checks, not an end-to-end online/offline
-PWA installation test. Actual hosted deployment, cross-device sharing/navigation,
-real Android/iPhone installation, native keyboard/share/clipboard permissions,
-cache eviction and Safari/WebKit rendering still require device testing.
-No live GitHub repository was changed and no donation/payment was made.
+Browser suites used Playwright/Chromium with inline local assets and an
+in-memory Storage adapter. The standalone smoke test loaded the actual
+standalone HTML in a storage-denied context. These are not proof of real-device
+persistence or an end-to-end PWA update.
 
-Duplicate detection is best-effort. It cannot know that every differently named
-expense represents the same bill. The user must avoid entering both a category
-total and the same itemised expenses. Preset essential/subscription flags are
-editable suggestions, not personal financial guidance.
+Hosted deployment, real browser restarts, native Android/iPhone installation,
+Safari/WebKit, OS clipboard/share permissions and live service-worker updates
+were not tested. No repository was changed and no donation or payment was made.
+The supplied ZIP is a release package for manual replacement of the website
+files.
 
-## Safe update / final live check
+## Before updating the public app
 
-1. Export the existing private JSON backup in the current app.
-2. Replace the website files in the same repository path. Keep Pages configuration.
-3. Wait for deployment, reopen online and check the footer says v1.1.0.
-4. Check your old entries/settings in the same browser. Do not clear site data.
-5. Add a fictional expense, reload, verify persistence, then remove it.
-6. Test a share link in a second browser and the explicit adoption flow.
-7. Test offline reopening and installation on the target real phone.
-8. Keep filled files and backups out of the public repository.
+Keep a private JSON backup from the existing app. Replace the site files in the
+same repository directory, retain the current Pages settings, and check the
+footer shows v1.1.1 after deployment. Do not clear browser data. Confirm your
+saved entries remain available. Keep personal backups outside the public repo.

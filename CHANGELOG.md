@@ -1,3 +1,15 @@
+# Homeflow 1.1.1
+
+- Refined 29 bilingual UI text pairs in the welcome, example, entry guidance, files, sharing and privacy screens.
+- Removed development-context wording and deployment instructions from the visitor interface.
+- Kept practical guidance, data-loss confirmations, incomplete-month warnings, sharing consent and privacy limitations.
+- The example now uses a simple sample-data label and explicitly warns that loading it replaces budget entries and actual transactions.
+- Retained the exact calculation engine, suggestion catalogue, styles, templates, donation assets and saved-data schema.
+- Bumped only the release/cache metadata to 1.1.1; no local-storage clearing or migration.
+- Added bilingual copy regression checks and rebuilt the standalone HTML.
+
+---
+
 # Homeflow 1.1.0
 
 ## New

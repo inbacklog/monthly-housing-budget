@@ -1,4 +1,8 @@
-# Homeflow 1.1.0 — quicker expense entry
+# Homeflow 1.1.1 — household budget planner
+
+## v1.1.1 update
+
+User-facing Greek and English copy is simpler and task-focused. Development-context messages have been removed from the welcome, example, entry guidance, backup and sharing flows. Existing expense shortcuts, custom entries, calculations and saved budgets are unchanged.
 
 
 A local-first, bilingual (Greek / English) household budget app for **one person or a larger household**. Mobile-friendly. Static HTML/CSS/JavaScript; no npm, build server, account, API key or database required.
@@ -34,7 +38,7 @@ underlying expenses. Category tiles are computed summaries, not extra budget row
 2. Replace the website files with all files from this package in the same repo root.
 3. Keep the same repository, Pages path and storage. Do not clear browser site data.
 4. Commit the files and reopen/reload the published site after deployment.
-5. Check the footer says **v1.1.0**. The JSON schema and local-storage key are unchanged.
+5. Check the footer says **v1.1.1**. The JSON schema and local-storage key are unchanged.
 
 The package is complete, not a patch. No live repository was modified by creating it.
 
