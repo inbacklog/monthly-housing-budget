@@ -1,4 +1,4 @@
-"""v1.2.0 bilingual user-copy regression checks.
+"""v1.5.0 bilingual user-copy regression checks.
 Uses the actual standalone builder with inline assets and an in-memory Storage
 adapter. It does not test hosted deployment or real-device persistence.
 """
@@ -48,7 +48,7 @@ def clean_visible(page):
 check('Removed development-context wording is absent from all runtime source',
       not any(x.casefold() in html.casefold() for x in forbidden))
 check('Storage key remains compatible with v1.1.0',"KEY='homeflow:budget:v1'" in html)
-check('Release and cache identify v1.2.0','v1.2.0 · inbacklog' in html and 'homeflow-static-v1.2.0' in (BASE/'sw.js').read_text())
+check('Release and cache identify v1.5.0','v1.5.0 · inbacklog' in html and 'homeflow-static-v1.5.0' in (BASE/'sw.js').read_text())
 with sync_playwright() as pw:
     browser=pw.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox'])
     page=browser.new_page(viewport={'width':1440,'height':1000},locale='el-GR')
@@ -59,9 +59,9 @@ with sync_playwright() as pw:
     page.set_content(html,wait_until='load')
     check('Greek welcome gives a clear next action','Φτιάξε τον μηνιαίο προϋπολογισμό σου.' in page.locator('#view').inner_text())
     check('Greek welcome contains the new short description','Πρόσθεσε τα έσοδα και τα έξοδά σου ή δοκίμασε ένα παράδειγμα για να ξεκινήσεις.' in page.locator('#view').inner_text())
-    page.screenshot(path=str(OUT/'Homeflow_v1.2.0_Welcome_Desktop.png'),full_page=False)
+    page.screenshot(path=str(OUT/'Homeflow_v1.5.0_Welcome_Desktop.png'),full_page=False)
     page.set_viewport_size({'width':390,'height':844})
-    page.screenshot(path=str(OUT/'Homeflow_v1.2.0_Welcome_Mobile.png'),full_page=False)
+    page.screenshot(path=str(OUT/'Homeflow_v1.5.0_Welcome_Mobile.png'),full_page=False)
     for language in ['el','en']:
         if page.locator('html').get_attribute('lang')!=language:page.locator('#langBtn').click()
         for tab in ['overview','plan','actual','future','guide']:

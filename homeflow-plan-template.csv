@@ -1,2 +1,2 @@
-﻿kind,date,type,description,category,amount,frequency,member,essential,subscription,funding
-plan,,expense,Example - replace or delete,housing,0,monthly,,true,false,cash
+﻿kind,date,type,description,category,amount,frequency,member,essential,subscription,funding,note
+plan,,expense,Example - replace or delete,housing,0,monthly,,true,false,cash,

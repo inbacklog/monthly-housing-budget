@@ -1,3 +1,11 @@
+# v1.5.0
+
+- Projection horizon is now set in years, 1–50, default 10 years.
+- Quick horizon presets: 5 / 10 / 20 / 30 years.
+- Long projections show annual snapshots in-app; CSV remains month-by-month.
+- Added combined cash + reserve + investment metric, clearly not full net worth.
+- Existing v1 browser data remains compatible.
+
 # v1.4.0
 
 - Add editable investment-return assumption (default 7%) and optional existing invested balance.

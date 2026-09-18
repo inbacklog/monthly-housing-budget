@@ -1,34 +1,26 @@
-# Homeflow v1.4.0 — verification report
+# Homeflow v1.5.0 — verification report
 
 ## Scope
+- Projection horizon moved to years: 1–50, default 10 years.
+- Quick presets: 5 / 10 / 20 / 30 years.
+- Internal model remains monthly for calculations and CSV export.
+- In-app projection table switches to annual snapshots above 5 years.
+- Added combined financial-position metric: available cash + emergency reserve + projected investments. It is explicitly not a full net-worth calculation.
+- Existing v1 local-storage budgets remain compatible.
 
-This release adds investment-return projections, optional existing invested capital, per-budget-entry notes, missing-expense suggestions, and a stronger Household control. It preserves the Homeflow v1 storage key and schema version so existing browser data can migrate through validation defaults.
+## Automated verification
+254 automated test groups/checks passed across calculation engine, packaging, QR assets, bilingual copy, v1.4 regression flows, v1.5 horizon behavior, scoped-entry UI, usability, row colouring, and drag/reordering.
 
-## Automated checks
+Key verified cases:
+- default horizon = 120 months / 10 years;
+- 50-year / 600-month horizon accepted and 601 months rejected;
+- 20-year view shows annual snapshots rather than 240 on-screen monthly rows;
+- full CSV export remains month-by-month;
+- investment return affects investment projection only, not household cash;
+- old browser data format and storage key remain unchanged;
+- notes, drag-and-drop, colours, contextual add controls and original supplied support QR assets continue to work.
 
-A total of **347 automated checks / test groups** passed across the calculation engine, preset catalogue, ordering, copy/navigation, row colouring, scoped-entry UI, general browser behaviour, usability flows, offline standalone build, QR byte integrity, packaging, and new v1.4 flows.
-
-Key v1.4-specific checks include:
-
-- legacy saved budgets receive `investmentStart = 0`, `investmentReturn = 7`, and empty notes without reset;
-- investment growth is compounded separately from available cash;
-- 0% investment return equals starting invested balance plus contributions;
-- notes survive validation and are scrubbed by anonymised sharing;
-- Notes column saves inline edits;
-- new expense suggestions exclude already-recognised budget items;
-- default investment return is 7% and is editable;
-- the future view shows projected investment value and modelled gain/loss;
-- the Wealth Goal Planner link carries existing invested balance, monthly contribution and assumed return;
-- mobile Plan view remains within the viewport;
-- the Household button is visually distinct;
-- both user-supplied QR PNG files remain byte-exact in the package and standalone build.
-
-## Calculation model for investments
-
-Investment return is an **assumption, not a forecast**. The app converts the annual effective return into a monthly factor and applies it to the separate investment balance, then adds that month’s investment contribution. Household available cash is not increased by investment gains. The projection does not model taxes, investment fees, volatility, or sequence-of-returns risk.
-
-## Test environment / limits
-
-UI tests used headless Chromium with simulated viewport sizes including 320, 390, 768 and 1440 CSS pixels. Touch behaviour is simulated where covered by the existing suite. The live GitHub Pages deployment and persistence/install behaviour on a physical Android or iPhone were **not** tested in this environment.
-
-Before replacing a live deployment, keep a private JSON backup of the current browser data.
+## Test environment / limitations
+- Browser UI tests: headless Chromium on desktop/mobile viewport simulations.
+- Not tested on a physical iPhone/Android device or against the live GitHub Pages deployment.
+- Long-term projections are deterministic scenarios based on the user's assumptions; they are not forecasts or probabilities.

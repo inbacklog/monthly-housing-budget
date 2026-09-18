@@ -16,7 +16,7 @@ function monthNow(){const d=new Date();return d.getFullYear()+'-'+String(d.getMo
 function isMonth(s){return typeof s==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(s)&&Number(s.slice(0,4))>=1900&&Number(s.slice(0,4))<=2199;}
 function isDate(s){if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s)||!isMonth(s.slice(0,7)))return false;const d=new Date(s+'T12:00:00Z');return Number.isFinite(d.valueOf())&&d.toISOString().slice(0,10)===s;}
 function addMonth(s,n){const [y,m]=s.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+n,1));return d.toISOString().slice(0,7);}
-function blank(month=monthNow()){return {version:1,title:'',month,members:[{id:'member1',name:'',role:'adult'}],lines:[],transactions:[],closedMonths:[],settings:{openingCash:0,emergencyFund:0,emergencyMonths:3,extraSaving:0,investPercent:0,investmentStart:0,investmentReturn:7,annualIncomeGrowth:0,annualExpenseGrowth:0,horizon:12}};}
+function blank(month=monthNow()){return {version:1,title:'',month,members:[{id:'member1',name:'',role:'adult'}],lines:[],transactions:[],closedMonths:[],settings:{openingCash:0,emergencyFund:0,emergencyMonths:3,extraSaving:0,investPercent:0,investmentStart:0,investmentReturn:7,annualIncomeGrowth:0,annualExpenseGrowth:0,horizon:120}};}
 function text(x,max=100){if(typeof x!=='string'||x.length>max)throw Error('Invalid text / μη έγκυρο κείμενο');return x;}
 function num(x,min=0,max=MAX_AMOUNT){if(typeof x!=='number'||!Number.isFinite(x)||x<min||x>max)throw Error('Invalid amount / μη έγκυρο ποσό');return x;}
 function bool(x){if(typeof x!=='boolean')throw Error('Invalid boolean');return x;}
@@ -47,7 +47,7 @@ function validate(input){
  const s=input.settings||{};for(const k of ['openingCash','emergencyFund','extraSaving','investmentStart'])p.settings[k]=num(s[k]??0);
  p.settings.emergencyMonths=num(s.emergencyMonths??3,0,36);p.settings.investPercent=num(s.investPercent??0,0,100);p.settings.investmentReturn=num(s.investmentReturn??7,-100,100);
  for(const k of ['annualIncomeGrowth','annualExpenseGrowth'])p.settings[k]=num(s[k]??0,-50,50);
- p.settings.horizon=num(s.horizon??12,1,120);if(!Number.isInteger(p.settings.horizon))throw Error('Horizon needs whole months');
+ p.settings.horizon=num(s.horizon??120,1,600);if(!Number.isInteger(p.settings.horizon))throw Error('Horizon needs whole months');
  return p;
 }
 function equivalent(l,month){if(!l.active)return 0;const factors={monthly:1,yearly:1/12,quarterly:1/3,weekly:52/12,salary14:14/12};return l.frequency==='once'?(l.month===month?l.amount:0):l.amount*factors[l.frequency];}

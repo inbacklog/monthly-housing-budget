@@ -80,7 +80,7 @@ with sync_playwright() as pw:
     page.locator('[data-edit-actual]').click();page.locator('#entryAmount').fill('29.50');submit()
     check('Editing actuals invalidates complete-month flag',get()['month'] not in get()['closedMonths'])
     page.locator('#nextMonth').click();check('Month selector isolates actuals',not page.locator('[data-edit-actual]').count());page.locator('#prevMonth').click()
-    tab('future');page.locator('[data-action="settings"]').first.click();page.locator('#extraSaving').fill('100');page.locator('#investPercent').fill('50');page.locator('#horizon').fill('24');page.locator('#settingsForm button[type="submit"]').click()
+    tab('future');page.locator('[data-action="settings"]').first.click();page.locator('#extraSaving').fill('100');page.locator('#investPercent').fill('50');page.locator('#horizonYears').fill('2');page.locator('#settingsForm button[type="submit"]').click()
     check('Projection horizon updates',page.locator('table tbody tr').count()==24)
     check('Investment link transfers no private initial portfolio', 'start=0' in page.locator('a[href*="wealth-goal-planner/#"]').get_attribute('href'))
     page.locator('#coffeeBtn').click();check('Support is a small non-modal panel',page.locator('#supportCard').is_visible() and not page.locator('#dialog').is_visible() and page.locator('#supportCard').bounding_box()['width']<=331)

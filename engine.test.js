@@ -3,7 +3,10 @@ const assert=require('node:assert/strict'),E=require('../engine.js');let checks=
 function test(name,fn){try{fn();console.log('PASS '+name);checks++;}catch(e){console.error('FAIL '+name);throw e;}}
 function near(a,b){assert.ok(Math.abs(a-b)<1e-6,`${a} != ${b}`);}
 function line(overrides={}){return {id:E.id(),type:'expense',label:'Test',category:'housing',member:'',amount:120,frequency:'monthly',month:'',essential:true,subscription:false,active:true,funding:'cash',...overrides};}
-function plan(lines=[]){const p=E.blank('2026-01');p.lines=lines;return p;}
+function plan(lines=[]){const p=E.blank('2026-01');p.lines=lines;p.settings.horizon=12;return p;}
+test('Default projection horizon is ten years',()=>assert.equal(E.blank('2026-01').settings.horizon,120));
+test('Projection horizon accepts fifty years',()=>{const p=E.blank('2026-01');p.settings.horizon=600;assert.equal(E.forecast(E.validate(p)).length,600);});
+test('Projection horizon rejects more than fifty years',()=>{const p=E.blank('2026-01');p.settings.horizon=601;assert.throws(()=>E.validate(p));});
 test('Empty budget is zero and has one member',()=>{const p=E.blank();assert.equal(p.members.length,1);assert.equal(E.budget(p).income,0);assert.equal(E.budget(p).unassigned,0);});
 test('Monthly conversion',()=>near(E.equivalent(line(),'2026-01'),120));
 test('Yearly conversion',()=>near(E.equivalent(line({frequency:'yearly'}),'2026-01'),10));
@@ -44,4 +47,10 @@ test('CSV adds named members and preserves other data',()=>{const p=E.demo();con
 test('CSV exported text neutralizes spreadsheet formulas',()=>{assert.equal(E.csvEscape('=SUM(A1)'), '"\'=SUM(A1)"');assert.equal(E.csvEscape(' @cmd'), '"\' @cmd"');});
 test('Prototype-like category is a safe dictionary key',()=>{const b=E.budget(plan([line({category:'__proto__'})]));near(b.categories['__proto__'],120);near(b.expenses,120);});
 test('Hundred deterministic allocation invariants',()=>{for(let i=0;i<100;i++){const p=plan([line({type:'income',amount:1000+i*17}),line({amount:50+i*8}),line({type:'saving',amount:i*2}),line({type:'investment',amount:i*3})]);p.settings.extraSaving=i*2;p.settings.investPercent=i;const b=E.budget(p),a=b.allocation;near(b.income-b.expenses-b.saving-b.investment-a.extraSaving-a.extraInvestment,a.remaining);assert.ok(a.extraInvestment>=0);}});
+
+test('Legacy saved budgets receive new investment defaults and empty notes',()=>{const p=E.demo('2026-01');delete p.settings.investmentStart;delete p.settings.investmentReturn;delete p.lines[0].note;const v=E.validate(p);assert.equal(v.settings.investmentStart,0);assert.equal(v.settings.investmentReturn,7);assert.equal(v.lines[0].note,'');});
+test('Investment projection compounds separately from cash',()=>{const p=E.blank('2026-01');p.settings.investmentStart=10000;p.settings.investmentReturn=12;p.settings.horizon=12;p.lines=[{id:'inc',type:'income',label:'Income',note:'',category:'income',member:'',amount:1000,frequency:'monthly',month:'',essential:false,subscription:false,active:true,funding:'cash'},{id:'inv',type:'investment',label:'Investment',note:'',category:'savings',member:'',amount:100,frequency:'monthly',month:'',essential:false,subscription:false,active:true,funding:'cash'}];const rows=E.forecast(E.validate(p)),end=rows.at(-1);assert.ok(end.investmentValue>11200);assert.equal(end.totalInvested,1200);assert.equal(end.investmentContributed,11200);assert.ok(end.investmentGrowth>0);assert.equal(end.cash,10800);});
+test('Zero investment return equals starting balance plus contributions',()=>{const p=E.blank('2026-01');p.settings.investmentStart=5000;p.settings.investmentReturn=0;p.settings.horizon=6;p.lines=[{id:'inc',type:'income',label:'Income',note:'',category:'income',member:'',amount:1000,frequency:'monthly',month:'',essential:false,subscription:false,active:true,funding:'cash'},{id:'inv',type:'investment',label:'Investment',note:'',category:'savings',member:'',amount:250,frequency:'monthly',month:'',essential:false,subscription:false,active:true,funding:'cash'}];const end=E.forecast(E.validate(p)).at(-1);near(end.investmentValue,6500);near(end.investmentGrowth,0);});
+test('Notes survive validation and are scrubbed by anonymized sharing',()=>{const p=E.demo('2026-01');p.lines[0].note='Private note';const v=E.validate(p);assert.equal(v.lines[0].note,'Private note');assert.equal(E.anonymize(v).lines[0].note,'');});
+
 console.log(`\n${checks} test groups passed.`);

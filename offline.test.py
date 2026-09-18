@@ -6,7 +6,7 @@ from pathlib import Path
 import sys,base64,re
 from playwright.sync_api import sync_playwright
 BASE=Path(__file__).resolve().parents[1]
-path=Path(sys.argv[1]) if len(sys.argv)>1 else BASE.parent/'Homeflow_Offline_v1.2.0.html'
+path=Path(sys.argv[1]) if len(sys.argv)>1 else BASE.parent/'Homeflow_Offline_v1.5.0.html'
 html=path.read_text(encoding='utf-8');count=0
 
 def check(label,result):
