@@ -14,5 +14,5 @@ check('App does not clear other applications storage',()=>{const s=read('app.js'
 check('Consent and no live-sync disclosure are included',()=>{const s=read('app.js');assert.ok(s.includes('shareConsent'));assert.ok(s.includes('there is no live synchronization'));assert.ok(s.includes('link is not encrypted'));});
 check('Standalone generator defers execution until body exists',()=>{const s=read('index.html');assert.ok(s.includes('<div id="dialogBody"'));assert.ok(s.includes('src="app.js" defer'));});
 check('New presets are loaded locally before the UI',()=>{const h=read('index.html');assert.ok(h.indexOf('src="presets.js"')<h.indexOf('src="app.js"'));assert.ok(h.includes('src="presets.js" defer'));});
-check('New dependency and offline template are precached under a bumped version',()=>{const s=read('sw.js');assert.ok(s.includes('homeflow-static-v1.2.1'));assert.ok(s.includes("'./presets.js'"));assert.ok(s.includes("'./templates/Household_Budget_Import_Template.xlsx'"));});
+check('New dependency and offline template are precached under a bumped version',()=>{const s=read('sw.js');assert.ok(s.includes('homeflow-static-v1.3.0'));assert.ok(s.includes("'./presets.js'"));assert.ok(s.includes("'./templates/Household_Budget_Import_Template.xlsx'"));});
 console.log(`\n${count} package checks passed.`);

@@ -1,36 +1,20 @@
-# Homeflow 1.2.1
+# v1.3.0
 
-- Contextual floating entry action: Budget and Actuals only, not Overview,
-  projections, Guide, open dialogs or the support panel.
-- Destination-specific entry menu; no redundant Budget/Actuals toggle.
-- Native dialog Escape/close restores only context-appropriate controls.
-- Supplied original Buy Me a Coffee and Wallet of Satoshi PNGs, preserved
-  byte-for-byte; uncropped aspect-ratio-safe display and offline embedding.
-- Service-worker cache bumped to 1.2.1. No data reset, schema or calculation changes.
-- Added contextual UI regression tests in Greek/English and responsive checks.
+- Replace both support QR assets with the owner-supplied original PNGs, byte for byte.
+- Embed the same original bytes in the standalone HTML.
+- Bump the static asset cache and footer to v1.3.0.
+- Preserve the compact support panel, contextual add controls, ordering, calculations and saved data.
 
----
+# v1.2.0
 
-# Homeflow 1.2.0
-
-## New
-- Pointer-event row dragging on dedicated handles, including emulated touch coverage.
-- Tap-to-position alternative, keyboard movement, edge scrolling, drop indicator and Undo.
-- Stored budget order; manual per-month actual order and explicit date-sort reset.
-- Filtering preserves hidden record slots. Sorting preserves amounts, IDs and completed-month flags.
-- Fixed + Add entry popover with Budget/Actuals context and income/expense shortcuts.
-- Add-another buttons at the end of both lists.
-- Type-first form buttons; amount before the description catalogue.
-- Suggestions follow type; separate description drafts are restored when switching back.
-- Decimal-comma support in inline budget amounts.
-
-## Compatibility
-- Keeps `homeflow:budget:v1` and version-1 JSON; adds optional `actualManualMonths`.
-- Old backups are accepted; new JSON and shared links preserve row order.
-- No financial calculation formula, preset, template, support address or QR changes.
-- Cache version bumped to 1.2.0; no saved-data clearing.
-
----
+- Contextual, sticky list-level add control; no global entry floating button.
+- Type and amount are first in the entry form; context-aware suggestions.
+- Mouse/touch row reordering, keyboard controls and exact-position alternative.
+- Order persistence uses the existing schema, including JSON and share export.
+- Filtered ordering preserves hidden entries and other transaction months.
+- Reordering preserves amounts/dates and restores table scroll offsets.
+- Removed redundant list add actions and corrected dark/light style tokens.
+- Added ordering and entry-context regression tests; refreshed offline cache.
 
 # Homeflow 1.1.1
 
