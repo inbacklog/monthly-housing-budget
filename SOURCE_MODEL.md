@@ -25,3 +25,10 @@ The source includes a 14-pay salary convention and an extra-income description c
 - Demo numbers are fictional and voluntary. They are not derived from the user's private income/expense amounts.
 
 The original workbook has not been edited. This is not a verified accounting/tax implementation or a general-purpose workbook converter.
+
+## v1.1 additions (not workbook-derived financial assumptions)
+
+The new catalogue provides common descriptions with no amounts. Quick setup groups
+existing rows and blank suggested entries by category. It edits the same underlying
+budget lines, not an additional set of category totals. Actuals remain separate.
+The supplied workbook and any personal numbers remain excluded from this package.

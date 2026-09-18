@@ -2,25 +2,26 @@
 The execution environment blocks browser navigation, so HTML is loaded with
 set_content. Persistence tests use an in-memory Storage adapter. This does NOT
 claim an end-to-end hosted/service-worker installation test.
-Run: python tests/browser.test.py [--offline PATH]
+Run: python tests/browser.test.py
 """
 from pathlib import Path
 import sys, re, json, base64, mimetypes
 from playwright.sync_api import sync_playwright
 BASE=Path(__file__).resolve().parents[1]
-OUT=BASE.parent.parent
+OUT=BASE.parent/'qa_output'
+OUT.mkdir(exist_ok=True)
 
 def source_html():
     html=(BASE/'index.html').read_text()
     html=html.replace('<link rel="stylesheet" href="styles.css">','<style>'+(BASE/'styles.css').read_text()+'</style>')
     html=html.replace('<link rel="manifest" href="manifest.webmanifest">','')
-    html=html.replace('<script src="engine.js" defer></script>','').replace('<script src="app.js" defer></script>','')
+    html=html.replace('<script src="engine.js" defer></script>','').replace('<script src="app.js" defer></script>','').replace('<script src="presets.js" defer></script>','')
     for asset in ['assets/icon.svg','assets/icon-192.png','assets/buymeacoffee-qr.png','assets/wallet-of-satoshi-qr.png']:
         html=html.replace(asset,'data:'+mimetypes.guess_type(asset)[0]+';base64,'+base64.b64encode((BASE/asset).read_bytes()).decode())
     js=(BASE/'app.js').read_text()
     # Test instrumentation only; never written to distribution source.
     js=js.replace('render();checkShared();','window._qa={encodeShare,decodeShare,getState:()=>JSON.parse(JSON.stringify(state)),setState:p=>commit(p)};render();checkShared();')
-    return html.replace('</body>','<script>window.HOMEFLOW_OFFLINE=true;</script><script>'+(BASE/'engine.js').read_text()+'</script><script>'+js+'</script></body>')
+    return html.replace('</body>','<script>window.HOMEFLOW_OFFLINE=true;</script><script>'+(BASE/'engine.js').read_text()+'</script><script>'+(BASE/'presets.js').read_text()+'</script><script>'+js+'</script></body>')
 
 checks=[]
 def check(name,condition):
@@ -38,7 +39,7 @@ with sync_playwright() as pw:
     def close():
         if page.locator('#dialog').is_visible():page.locator('#closeDialog').click()
     def tab(name):page.locator(f'[data-tab="{name}"]').click()
-    def submit():page.locator('#entryForm button[type="submit"]').click()
+    def submit():page.locator('#saveEntry').click()
     check('Initial public app starts empty',get()['lines']==[] and len(get()['members'])==1)
     check('No private personal defaults in page',get()['title']=='' and get()['settings']['investPercent']==0 and get()['settings']['openingCash']==0)
     page.locator('#demoBtn').click();page.locator('#confirmAction').click()

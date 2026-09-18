@@ -1,8 +1,42 @@
-# Homeflow · Monthly Housing Budget
+# Homeflow 1.1.0 — quicker expense entry
+
 
 A local-first, bilingual (Greek / English) household budget app for **one person or a larger household**. Mobile-friendly. Static HTML/CSS/JavaScript; no npm, build server, account, API key or database required.
 
 **Intended Pages URL:** https://inbacklog.github.io/monthly-housing-budget/
+
+## New expense-entry workflow
+
+In **My budget** and **Actuals**, visible shortcuts include Groceries, Rent, Electricity,
+Water, Internet, Fuel, Pharmacy and Streaming. The **All expenses** picker contains
+61 expense descriptions, searchable in Greek/English, with editable categories.
+There are also 9 income/saving/investment labels in the detailed entry form.
+No suggested price or household amount is inserted. Selecting a label does not
+replace the amount, frequency, date or person already entered. Default
+essential/subscription flags are suggestions and can be changed.
+
+**Quick monthly setup** groups current expense entries and blank suggestions by
+category. Enter only relevant amounts, choose a period and review the monthly
+sum. Empty new rows and new zero rows are not added. An existing zero is a
+valid explicit update; clearing an existing amount leaves it unchanged.
+Existing record IDs, people, funding sources, paused flags and one-off months
+are preserved. Batch edits require review and an acknowledgement before save.
+The existing recurring-budget-across-months model is unchanged.
+
+**Save & add another** records the entry once and opens a blank amount/description
+for the next. Possible duplicates require acknowledgement; differently worded
+bills may still escape detection, so do not count a category total and the same
+underlying expenses. Category tiles are computed summaries, not extra budget rows.
+
+## Updating an existing installation
+
+1. In the current app, use **Files & templates → JSON backup**; keep it private.
+2. Replace the website files with all files from this package in the same repo root.
+3. Keep the same repository, Pages path and storage. Do not clear browser site data.
+4. Commit the files and reopen/reload the published site after deployment.
+5. Check the footer says **v1.1.0**. The JSON schema and local-storage key are unchanged.
+
+The package is complete, not a patch. No live repository was modified by creating it.
 
 ## Start
 
@@ -95,7 +129,7 @@ GitHub Pages projects for the same owner share an origin; separate storage keys 
 
 ## Offline / device installation
 
-`sw.js` caches only this app's assets in `homeflow-static-*` and controls only this project path. Other apps' caches are not deleted. First successful online caching is required. Browser eviction or clearing storage removes offline data. The Excel template is not pre-cached; download it while online. Dynamically generated CSV templates work offline.
+`sw.js` caches only this app's assets in `homeflow-static-*` and controls only this project path. Other apps' caches are not deleted. First successful online caching is required. Browser eviction or clearing storage removes offline data. The Excel template is included in this version’s asset cache after a successful online installation. Dynamically generated CSV templates work offline.
 
 The separate standalone HTML has scripts, styles, icons, QR images and Excel template embedded and does not register a service worker. File-opening behavior on smartphones varies; the published HTTPS URL is the intended mobile experience.
 
@@ -103,8 +137,12 @@ The separate standalone HTML has scripts, styles, icons, QR images and Excel tem
 
 ```
 node tests/engine.test.js
+node tests/presets.test.js
 node tests/package.test.js
 python tests/browser.test.py
+python tests/usability.test.py
+python tools/build_offline.py /path/to/Homeflow_Offline.html
+python tests/offline.test.py /path/to/Homeflow_Offline.html
 ```
 
 The browser suite uses Playwright and Chromium, not required for end users. Read `QA_REPORT.md` for executed checks and limits. Financial formulas live independently in `engine.js`. UI and translations are in `app.js`; no external JavaScript libraries are loaded.

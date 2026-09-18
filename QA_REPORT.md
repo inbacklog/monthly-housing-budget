@@ -1,58 +1,94 @@
-# Homeflow v1.0.0 — Verification report
+# Homeflow v1.1.0 — verification report
 
-## Executed
+This report describes checks actually run on the final v1.1.0 files.
 
-**40 calculation-engine test groups**, including 100 deterministic allocation invariant cases:
+## Executed in the authoring environment
 
-- Each recurring frequency and one-offs; 14-pay income averaging.
-- Paused lines; members do not multiply amounts.
-- Cash versus benefit versus mixed income.
-- Saving/investment separation and no double-counting in allocations.
-- Deficit preservation, extra-saving cap and nonnegative extra investment.
-- Monthly actuals isolation and incomplete-month flags.
-- Forecast accumulation, growth, one-offs and 10% discretionary scenario.
-- Date validation, malformed inputs, duplicate IDs and prohibited funding combinations.
-- CSV quoting, BOM, delimiter/decimal variants, atomic validation, named members.
-- Default share anonymization and formula-like CSV export sanitization.
-- Safe dictionary keys for arbitrary custom categories.
+| Suite | Passed |
+| --- | ---: |
+| Original calculation-engine test groups | 40 |
+| New preset / atomic-batch test groups | 30 |
+| Original UI regression assertions (Chromium) | 63 |
+| New guided-entry / usability assertions (Chromium) | 57 |
+| Package / static service-worker assertions | 14 |
+| Actual standalone-HTML smoke assertions | 12 |
 
-**63 Chromium interface checks**, covering:
+The original calculation engine is unchanged. Its existing tests include 100
+deterministic allocation-invariant cases inside the reported groups.
 
-- Empty public start, voluntary labelled demo, English/Greek and dark theme.
-- Multi-person creation/removal without changing totals.
-- Free amount entry, custom category, literal user HTML, inline edits and pause.
-- Search and subscription filters.
-- Actual expense-only use, month navigation, completeness and edit invalidation.
-- Horizon settings and safe Wealth Goal Planner handoff.
-- Compact non-modal support card, QR image loading, Lightning link, Escape close.
-- Sharing consent, default redaction and compressed encode/decode roundtrip.
-- Invalid CSV safety, import preview, duplicate warnings and JSON replacement.
-- No page-level horizontal overflow across **320, 390, 768 and 1440 px**, on each of the five sections.
-- No uncaught JavaScript exceptions in these flows.
+### New data and calculation coverage
 
-**12 package/static service-worker checks:** local assets, manifest paths, template presence/parse, no personal workbook in package, isolated storage/cache prefixes, excluded cross-origin and other-project paths, sharing disclosure.
+- No prices or household personal data in the suggestion catalogue.
+- 61 expense descriptions and 9 income/saving/investment descriptions; unique IDs.
+- Greek accent/case normalization, English search, provider search aliases and category filters.
+- Legacy bilingual labels recognised without duplicating matching quick-entry suggestions.
+- Decimal comma and decimal point; zero versus blank; invalid and oversized inputs.
+- Atomic multi-entry creation and updates, with no mutation of the source on errors.
+- Existing IDs, people, funding, flags, paused rows and one-off dates preserved.
+- Blank/zero new rows skipped; existing zero updates, blank existing amount unchanged.
+- Existing custom categories and higher-precision imported values preserved.
+- Income, savings, investment, actual transactions and complete-month flags untouched by budget batches.
+- Updated data still validates under JSON schema 1 and works with the existing CSV format.
 
-**2 QR payload checks:** generated Buy Me a Coffee and Lightning QR images decoded independently to their intended URL/address. No payment was made or wallet transaction tested.
+### New UI coverage
 
-The Excel template was inspected and rendered; key ranges have no formula-error cells. It is an input template and intentionally contains no financial calculation formulas.
+- Visible shortcuts in Budget and Actuals; no suggested price inserted.
+- Changing a suggestion retains the entered amount, person, frequency and actual date.
+- Empty amounts rejected; arbitrary descriptions and user-chosen amounts accepted.
+- Possible duplicate warning, no save until acknowledged, intentional overrides allowed.
+- Save & add another records once and opens a blank amount/description.
+- Catalogue search and subscriptions; search Enter does not submit a financial entry.
+- Category summaries and filtering; no separate category-total charges added.
+- Actual-only entries and full-catalogue selection stay separate from budget entries.
+- Moving an actual payment reopens completion flags for both affected months.
+- Batch preview, monthly conversions, review/consent gate, hidden-draft retention,
+  correct existing-ID updates, cancellation and invalid-input safety.
+- UI reload reads the prior v1 JSON unchanged through a storage adapter.
+- Unrelated applications' storage remains untouched.
+- Greek/English and light/dark rendering, compact nonmodal support panel.
+- Horizontal layout checks on plan, actuals, entry dialogs and the batch editor at
+  320, 390, 768 and 1440 px. Screenshots visually inspected at mobile and desktop sizes.
+- No uncaught JavaScript exceptions in these tested flows.
 
-## Test-environment limitations
+### Package and standalone coverage
 
-Browser navigation to HTTP/HTTPS and file URLs is blocked in this execution environment. UI checks therefore loaded inlined HTML/CSS/JavaScript using Playwright `set_content`. An in-memory Storage adapter was used for persistence-flow checks. This verifies application logic, **not actual cross-restart browser persistence**.
+- Scripts and styles load from local files; presets load before the UI.
+- All referenced assets exist; the manifest retains the same project-relative scope.
+- New cache version includes presets and the blank Excel template, excludes other projects.
+- Local storage key `homeflow:budget:v1` and schema 1 retained; no clear-all call.
+- Private household workbook is absent; only the blank import template is included.
+- Generated standalone has no external script/style dependencies or test instrumentation.
+- Standalone scripts run after DOM elements exist; expense and batch entry work.
+- Storage-denied warnings display instead of falsely claiming saved data.
+- Embedded Excel template is byte-identical; both QR images load from embedded data.
 
-The standalone app was also rendered in a storage-denied context; calculations still work and the UI warns that data is not being saved.
+## Limitations — not claimed as tested
 
-The service-worker checks are package/unit checks, **not an end-to-end online-to-offline installation test**. Hosted GitHub Pages deployment, real-device Android/iOS installation, actual browser cache eviction, real clipboard permissions and native share sheets still need device/deployment checks.
+Browser navigation to localhost HTTP is blocked by environment policy
+(`ERR_BLOCKED_BY_ADMINISTRATOR`). UI suites therefore use Playwright `set_content`
+with inline local assets. The regression suites use an in-memory Storage adapter.
+This checks application behavior, not actual cross-restart browser persistence.
+The standalone smoke test uses the real saved HTML, without test instrumentation,
+in a storage-denied context.
 
-No Safari/WebKit engine, bank connection, tax validation, external provider subscription cancellation, or financial payment is claimed to have been tested.
+Service-worker checks are package/unit checks, not an end-to-end online/offline
+PWA installation test. Actual hosted deployment, cross-device sharing/navigation,
+real Android/iPhone installation, native keyboard/share/clipboard permissions,
+cache eviction and Safari/WebKit rendering still require device testing.
+No live GitHub repository was changed and no donation/payment was made.
 
-## Before sharing the live URL
+Duplicate detection is best-effort. It cannot know that every differently named
+expense represents the same bill. The user must avoid entering both a category
+total and the same itemised expenses. Preset essential/subscription flags are
+editable suggestions, not personal financial guidance.
 
-1. Upload the package and confirm successful GitHub Pages deployment.
-2. On a real phone, enter fictional data, reload and verify persistence.
-3. Create a share link and open it in another browser; verify the explicit adoption flow.
-4. Download JSON, restore it and confirm the same entries/settings.
-5. After a successful online load, test offline reopening and home-screen installation.
-6. Verify external donation links open the correct service; do not use a test payment unless personally intended.
+## Safe update / final live check
 
-Do not publish any filled workbook or financial backup while testing.
+1. Export the existing private JSON backup in the current app.
+2. Replace the website files in the same repository path. Keep Pages configuration.
+3. Wait for deployment, reopen online and check the footer says v1.1.0.
+4. Check your old entries/settings in the same browser. Do not clear site data.
+5. Add a fictional expense, reload, verify persistence, then remove it.
+6. Test a share link in a second browser and the explicit adoption flow.
+7. Test offline reopening and installation on the target real phone.
+8. Keep filled files and backups out of the public repository.
