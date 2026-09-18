@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="el" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#205649"><meta name="description" content="Homeflow — ένα απλό, ιδιωτικό πλάνο για τα οικονομικά του σπιτιού. Έσοδα, έξοδα, συνδρομές και στόχοι, χωρίς λογαριασμό.">
+<meta name="referrer" content="no-referrer"><meta name="color-scheme" content="light dark"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Homeflow">
+<meta property="og:title" content="Homeflow · Household budget"><meta property="og:description" content="Λίγη οργάνωση. Περισσότερη ηρεμία. Ένα απλό πλάνο για το νοικοκυριό σου."><meta property="og:type" content="website">
+<title>Homeflow · Ο προϋπολογισμός του σπιτιού</title>
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="assets/icon-192.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
+<script defer src="budget-engine.js"></script><script defer src="data.js"></script><script defer src="xlsx-reader.js"></script><script defer src="io.js"></script><script defer src="scenarios.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="layout">
+<aside class="sidebar"><a href="./" class="brand" aria-label="Homeflow"><span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m7 17 13-11 13 11v16H7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M14 27v-5m6 5v-9m6 9v-13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span><span>homeflow<small>HOUSEHOLD PLANNER</small></span></a><nav id="nav" aria-label="Κύρια πλοήγηση"></nav><div class="sidebar-bottom"><span class="mini-dot"></span><span id="privacyShort">Τα δεδομένα μένουν εδώ.</span><button class="plain guide-side" data-action="guide">Οδηγός</button></div></aside>
+<div class="main-shell"><header class="topbar"><div class="crumb" id="crumb"></div><div class="top-actions"><label class="month-label"><span id="monthLabel">Μήνας</span><input id="monthSelect" type="month" min="1900-01" max="2200-12" aria-label="Μήνας αναφοράς"></label><div class="language"><button id="elBtn" lang="el" aria-pressed="true">EL</button><button id="enBtn" lang="en" aria-pressed="false">EN</button></div><button class="icon-btn" id="themeBtn" aria-label="Αλλαγή θέματος"></button><button class="btn small desktop-share" data-action="share" id="topShare">Κοινοποίηση</button></div></header>
+<div id="statusBanner" class="status-banner" hidden></div><div id="sharedBanner" class="shared-banner" hidden></div><div id="demoBanner" class="demo-banner" hidden></div>
+<main id="content" tabindex="-1"><noscript><p class="notice">Ενεργοποίησε τη JavaScript για να χρησιμοποιήσεις την εφαρμογή. Enable JavaScript to use this app.</p></noscript><div class="loading">Homeflow…</div></main>
+<footer><span id="footCopy">Μια πιο καθαρή εικόνα για το σπίτι.</span><span><button class="plain" data-action="guide" id="footGuide">Οδηγός & απόρρητο</button> · <a href="https://github.com/inbacklog/monthly-housing-budget" target="_blank" rel="noopener noreferrer">GitHub ↗</a> · v1.2.0</span></footer>
+</div></div>
+<button class="quick-add" data-action="quickActual" id="quickAdd" aria-label="Νέα πραγματική κίνηση">＋ <span>Κίνηση</span></button>
+<button class="coffee-fab" id="coffeeBtn" aria-controls="supportCard" aria-expanded="false" aria-label="Buy me a coffee">☕</button>
+<aside class="support-card" id="supportCard" hidden aria-labelledby="supportTitle"><div class="support-head"><h3 id="supportTitle">Buy Me a Coffee</h3><button class="icon-btn" id="supportClose" aria-label="Close">×</button></div><p class="support-intro" id="supportIntro">Optional support if you found the app useful.</p><section class="support-section"><h4>1) Buy Me a Coffee</h4><a class="support-address" href="https://buymeacoffee.com/inbacklog" target="_blank" rel="noopener noreferrer">buymeacoffee.com/inbacklog</a><img class="support-qr" src="assets/buymeacoffee-qr.png" width="164" height="164" alt="Buy Me a Coffee QR code"><a class="btn small full" href="https://buymeacoffee.com/inbacklog" target="_blank" rel="noopener noreferrer" id="coffeeOpen">Open Buy Me a Coffee ↗</a></section><section class="support-section"><h4>2) Bitcoin Lightning wallet</h4><a class="support-address" href="lightning:doableshrimp862@walletofsatoshi.com">doableshrimp862@walletofsatoshi.com</a><img class="support-qr" src="assets/wallet-of-satoshi-qr.png" width="164" height="164" alt="Lightning address QR code"><button class="btn small full" id="supportCopy">Copy Lightning address</button><p class="support-note" id="lightningNote">Lightning address · not an on-chain BTC address</p></section></aside>
+<dialog id="dialog" aria-labelledby="dialogTitle"><div class="dialog-head"><h2 id="dialogTitle"></h2><button class="icon-btn" id="dialogClose" aria-label="Κλείσιμο">×</button></div><div id="dialogBody"></div></dialog>
+<div class="toast" id="toast" role="status" hidden></div><span class="sr-only" id="liveStatus" aria-live="polite"></span>
+</body></html>
