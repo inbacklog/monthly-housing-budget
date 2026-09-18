@@ -8,9 +8,6 @@
 - The entry destination follows the current screen; the redundant Budget/Actuals
   switch has been removed from the compact add menu. Budget entries and actual
   transactions remain separate.
-- Donation QR images are the two exact PNGs supplied by the owner. They are
-  displayed without cropping, stretching or colour filters, and embedded in
-  the standalone copy. Support remains a compact, nonmodal panel.
 - All v1.2.0 features remain: drag handles, keyboard positioning, Undo, type-first
   entry form, custom categories, quick expense setup, backups and shared links.
 - Financial formulas, data format and storage key remain unchanged. The cache
