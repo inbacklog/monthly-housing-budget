@@ -58,7 +58,7 @@ with sync_playwright() as pw:
     page.locator('#allowDuplicate').check();save();check('Intentional separate entry may be explicitly saved',len(state()['lines'])==2)
 
     blank();page.locator('[data-action="add-plan"]').first.click()
-    page.locator('#entryType').select_option('income',force=True);page.locator('[data-entry-preset="salary"]').first.click()
+    page.locator('#entryType').select_option('income');page.locator('[data-entry-preset="salary"]').first.click()
     page.locator('#entryAmount').fill('1700');save()
     check('Income also has shortcuts and correct type',state()['lines'][0]['type']=='income' and state()['lines'][0]['category']=='income')
     page.locator('[data-action="library"]').click();page.locator('#librarySearch').fill('ΝΕΡΟ')
