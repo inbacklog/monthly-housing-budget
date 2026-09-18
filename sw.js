@@ -1,10 +1,10 @@
-/* Only this app's URL scope and cache are managed. Never purge another app. */
-'use strict';
-const PREFIX='homeflow-'+new URL(self.registration.scope).pathname+'-',CACHE=PREFIX+'v1.2.0';
-const FILES=['./','index.html','styles.css','budget-engine.js','data.js','xlsx-reader.js','io.js','scenarios.js','app.js','manifest.webmanifest','assets/icon.svg','assets/icon-192.png','assets/icon-512.png','assets/buymeacoffee-qr.png','assets/wallet-of-satoshi-qr.png','templates/Homeflow_Template.xlsx','templates/Homeflow_Template.csv'];
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
-self.addEventListener('fetch',e=>{const u=new URL(e.request.url),scope=new URL(self.registration.scope);if(e.request.method!=='GET'||u.origin!==scope.origin||!u.pathname.startsWith(scope.pathname))return;
- if(e.request.mode==='navigate'){e.respondWith(fetch(e.request).then(async r=>{if(r.ok){const c=await caches.open(CACHE);await c.put('index.html',r.clone()).catch(()=>{});}return r;}).catch(()=>caches.open(CACHE).then(c=>c.match('index.html'))));return;}
- e.respondWith(caches.open(CACHE).then(async c=>{const cached=await c.match(e.request);if(cached)return cached;return fetch(e.request).then(async r=>{if(r.ok)await c.put(e.request,r.clone()).catch(()=>{});return r;});}));
+/* Only Homeflow assets: never delete other apps' caches on this origin. */
+const CACHE='homeflow-static-v1.0.0',PREFIX='homeflow-static-';
+const FILES=['./','./index.html','./styles.css','./engine.js','./app.js','./manifest.webmanifest','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./assets/buymeacoffee-qr.png','./assets/wallet-of-satoshi-qr.png'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{const u=new URL(event.request.url),base=new URL(self.registration.scope);if(event.request.method!=='GET'||u.origin!==base.origin||!u.pathname.startsWith(base.pathname))return;
+ const rel=u.pathname.slice(base.pathname.length);if(!FILES.some(f=>f.slice(2)===rel))return;
+ const key=new URL(rel||'./',base).href;
+ event.respondWith(fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(c=>c.put(key,copy)));}return response;}).catch(()=>caches.open(CACHE).then(c=>c.match(key))));
 });

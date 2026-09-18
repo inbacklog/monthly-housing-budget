@@ -1,7 +1,1 @@
-{
- "id":"./", "name":"Homeflow · Household budget", "short_name":"Homeflow",
- "description":"Ένα απλό πλάνο για τα οικονομικά του σπιτιού.",
- "lang":"el", "start_url":"./", "scope":"./", "display":"standalone",
- "background_color":"#f5f6f2", "theme_color":"#205649",
- "icons":[{"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}]
-}
+{"id":"./","name":"Homeflow · Household Planner","short_name":"Homeflow","description":"Budget, actuals and family financial scenarios on your device.","start_url":"./","scope":"./","display":"standalone","background_color":"#f5f6f2","theme_color":"#234f47","icons":[{"src":"assets/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}

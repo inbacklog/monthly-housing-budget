@@ -1,101 +1,118 @@
-# Homeflow · Household Budget Planner · v1.2.0
+# Homeflow · Monthly Housing Budget
 
-Local-first, bilingual (Greek/English) household budgeting app. No build step,
-backend, remote scripts, trackers, private input data or API keys in this package.
-The public application starts empty, with a skippable onboarding guide.
-An optional fictional example is explicitly labelled throughout.
+A local-first, bilingual (Greek / English) household budget app for **one person or a larger household**. Mobile-friendly. Static HTML/CSS/JavaScript; no npm, build server, account, API key or database required.
 
-## New in 1.2
-**Up to three independent editable scenarios, including the original.** Duplicate,
-rename, switch, delete with confirmation, select a reference, and compare on a
-common start month and 1–120 month horizon. Three desktop cards and a shared
-chart; a compact simultaneous three-column summary and readable stacked detail
-cards on mobile. Per-scenario shocks affect both the
-summary and projection. Incomplete inputs do not produce reliable capacity/deltas.
+**Intended Pages URL:** https://inbacklog.github.io/monthly-housing-budget/
 
-The existing budget editors operate on the active scenario. Plans, settings,
-household members, goals and optionally copied actual transactions are independent.
-There is no live synchronisation. Actual transactions are not copied by default
-and are never substituted for planned projection values.
+## Start
 
-Share only the active scenario or the entire comparison. Descriptions, member
-and scenario names are anonymised by default; actuals are opt-in. Password
-protection uses the existing Web Crypto AES-GCM/PBKDF2 implementation. No security
-audit is claimed. Local data and backup files remain unencrypted.
+Upload this folder's **contents** (not the ZIP, not an extra parent directory) to the `main` branch of `inbacklog/monthly-housing-budget`. `index.html` must be at the repository root. Choose **Settings → Pages → Deploy from a branch → main → / (root)**.
 
-Full JSON backup/restore now covers the whole workspace. Existing single-budget
-JSON and old shared links remain readable. CSV rows export only the active
-scenario; comparison CSV includes each scenario/month separately.
+Official instructions: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 
-## Included existing functionality
-Budget and actual records, category-level differences, subscriptions, next renewal
-and calendar-file export, household members/cost allocation, goals and emergency
-reserve, optional spending cushion, forecasts, fictional demo, XLSX/CSV templates
-and imports with preview, local saves, privacy-aware sharing, dark mode, responsive
-layout, scoped PWA cache, compact Buy Me a Coffee / Lightning support panel.
+The repository is not modified by preparing this package. Publication and real-device installation need a deployment check.
 
-The legacy workbook import reads the `Monthly expenses` / `Budget overview`
-structure. No original workbook or private examples are distributed. Personal
-input files belong in the app's local import UI, never in a public repository.
+## Main features
 
-## Deployment
-Upload the contents of this folder to the root of `inbacklog/monthly-housing-budget`.
-Keep `index.html`, all JS files (including **scenarios.js**), CSS, manifest, `sw.js`,
-`assets/` and `templates/`. Enable GitHub Pages from `main` / `(root)`.
+- Empty public start; deliberately fictional demo behind a confirmation.
+- Add/remove household members; optional names; shared or assigned entries. Members never multiply amounts automatically. Technical safeguard: up to 1,000 members, 10,000 planned entries and 10,000 transactions.
+- Budget income, living expenses, saving transfers and investment transfers separately.
+- Monthly, annual, quarterly, weekly, 14-paycheck salary and one-off entries. Pause and edit entries, flag subscriptions/essential expenses, add custom categories.
+- Net cash income, restricted benefits and unsplit mixed income handled separately. Vouchers are not silently counted as cash available to invest.
+- Actual transactions by month, including expense-only use. No invented income or automatic budget + actual double count.
+- Mark a month complete to unlock category variances. Editing actuals reopens completeness. A completed actual month can become a new budget with explicit replacement confirmation.
+- Donut category breakdown, income-to-remainder explanation, member assignment summaries and data-based observations.
+- Configurable reserve target, extra savings and a user-chosen percentage of the remaining surplus for additional investment. Default extra investment percentage is zero.
+- 1–120 month projections, income/expense growth assumptions, annualized cash model, 10% lower discretionary-spending and 10% lower-income comparisons, monthly table and CSV export.
+- Optional handoff to Wealth Goal Planner of the monthly investment contribution only. No personal capital is assumed.
+- CSV upload with validation, preview, confirmation and duplicate-looking-row warning. JSON full backup/restore.
+- Shareable compressed URL snapshots; editable independent copies. No synchronized shared accounts.
+- Light/dark theme, guide, keyboard-labelled controls, local-only auto-saving, scoped offline support, optional PWA installation.
+- Small bottom-right coffee panel with Buy Me a Coffee and Bitcoin Lightning address, QR codes and copy action.
 
-See `START_HERE_EL.md` for Greek setup, use, update and privacy instructions.
-Expected site: `https://inbacklog.github.io/monthly-housing-budget/`.
-This package has not been pushed or deployed by the assistant.
+## Important financial distinctions
 
-## Data boundaries
-- Plan schema: `homeflow`, version `1` (unchanged).
-- Workspace schema: `homeflow-workspace`, version `1` (1–3 named documents).
-- New storage: `homeflow:workspace:v1`. Preferences: `homeflow:prefs:v1`.
-- Legacy `homeflow:state:v1` is read for migration and is not overwritten by new saves.
-- Saves are a single workspace write; failures are surfaced visibly.
-- Cross-tab storage changes prevent silent last-writer overwrite; back up/reload.
-- Shared copies are sandboxed until confirmed, and local data is not auto-replaced.
-- Full workspace imports and shared-copy acceptance replace ALL scenarios only
-  after explicit confirmation. Single-budget imports replace the active scenario.
-- Delete-local-data affects only the three Homeflow keys, not other inbacklog apps.
-- Shared payload limit: 2 MB decompressed, UI link limit 8,000 characters; for larger
-  datasets use private JSON. File imports have a 5 MB limit.
+**Budget, not a bank statement.** Annual and weekly expenses are averaged across months. Fourteen salaries are averaged over twelve months. A projected positive balance does not establish that cash is available on each bill's actual due date.
 
-## Calculation meaning
-All monetary values use EUR. Recurring entries become monthly equivalents.
-Vouchers/benefits are separate from cash. Savings, investments and cushion reduce
-remainder but are not counted as consumption. Returns on investment are not
-modelled by this household app. Current-month and forecast input completeness is
-preserved. A missing amount is not zero. Projections start at zero cumulative
-remainder, not at a bank-account or wealth balance.
+Cash flow uses:
 
-The setup wizard's aggregate "Other costs" line is marked for review so users
-classify essential spending and replace aggregates when entering detailed rows.
-It does not guess family income, costs or how much should be invested.
-
-## Development checks
-No dependencies are needed to run the app. Test dependencies are separate:
-Node.js for logic tests; Python + Playwright and Chromium for UI checks.
-
-```sh
-node tests/engine.test.js
-node tests/scenarios.test.js
-node tests/package.test.js
-python tests/browser.test.py
-python tests/scenarios.browser.test.py
+```
+net cash income
+− cash living expenses
+− planned saving transfers
+− planned investment transfers
+− additional saving target (capped at available surplus)
+− user-selected share of the remaining surplus for extra investment
+= unassigned cash flow (negative values are retained)
 ```
 
-`CHROMIUM_PATH` and `QA_OUTPUT` can override test executable/output locations.
-UI tests use locally rendered documents and an explicitly simulated storage Map.
-Loopback navigation is blocked by this execution environment. This is not a test
-of production browser persistence, service-worker lifecycle or real mobile install.
-See `QA_REPORT.md` for actual results and untested deployment boundaries.
+There is one recurring budget shared across months; editing it recalculates prior budget comparisons. Keep JSON snapshots for historical budget versions. Actual transactions remain dated and separate. Opening available cash is the balance at the start of the selected forecast month and is not rolled forward automatically from earlier actuals.
 
-## Reference documentation
-Implementation references (not investment recommendations):
+Opening available cash excludes the emergency reserve; otherwise the same balance would be counted twice. Existing reserve does not earn modelled returns and is not silently consumed in projections.
+
+The monthly reserve target = user-chosen months × marked essential monthly expenses. The default 3 months is an editable illustrative setting, not personal advice. If no essential expenses are marked, the app warns against interpreting a zero target as no need for savings.
+
+Forecasts use planned entries, **not** an extrapolation of partial actuals. Annual changes compound gradually month by month. One-off amounts are not repeated or grown. There are no investment returns, probability estimates or tax/loan calculations beyond entered amounts. Scheduled transfers remain visible even if a budget cannot fund them; warnings flag underfunded months and negative cash.
+
+Restricted-benefit income and corresponding benefit-funded expenses are separate from cash totals. Mixed income awaits explicit splitting and is excluded from cash. Cash and benefit amounts must not be duplicated.
+
+## Import / export
+
+See `templates/`. The workbook is a convenient **entry template**, not a general XLSX importer. Save `Plan_CSV` or `Actual_CSV` as CSV UTF-8 before import. Arbitrary Excel, PDF and bank-statement import is intentionally unsupported: silently guessing their meaning would be unsafe.
+
+CSV header, in this order:
+
+```
+kind,date,type,description,category,amount,frequency,member,essential,subscription,funding
+```
+
+- `kind`: `plan` or `actual`.
+- `date`: ISO `YYYY-MM-DD` for actual; `YYYY-MM` for one-off planned entries; otherwise blank.
+- `type`: `income`, `expense`, `saving`, `investment`.
+- `amount`: nonnegative; up to 2 decimal places; no currency sign or thousands separators.
+- `frequency`: `monthly`, `yearly`, `quarterly`, `weekly`, `salary14` (income only), `once`. Blank for actual.
+- `member`: optional exact name; unknown nonempty names create members; blank means shared.
+- `essential`, `subscription`: `true` or `false`; only planned expense flags affect the model.
+- `funding`: `cash`, `benefit`, `mixed` (income only). Saving/investment transfers must use cash.
+- Standard category codes are listed in the template and `engine.js`. Custom nonempty text is supported.
+- Comma-delimited CSV with decimal point, or semicolon-delimited CSV with decimal comma. UTF-8 BOM and quoted fields are supported.
+
+Imports are validated entirely before applying. CSV **appends**; duplicate-looking rows are warned, not silently deduplicated. CSV exports only active planned entries and actual transactions; it is **not** a full backup of settings, paused rows, or completeness. Use JSON for full fidelity. JSON replacement requires preview confirmation. Maximum input size: 2 MB.
+
+Formula-like CSV text is prefixed to reduce spreadsheet formula-injection risk. Descriptions are displayed as escaped text, not HTML.
+
+## Sharing and privacy
+
+Inputs stay in this browser under `homeflow:budget:v1`. Theme/language use `homeflow:prefs:v1`. No analytics, trackers, ads, remote calculation calls or bank credentials. Data is not encrypted at rest.
+
+Links carry a snapshot after `#plan=`. The fragment is not part of the HTTP request, **but anyone with the link can decode it**. Browser history and messaging apps can retain it. Compression is not encryption. There is no link revocation, live synchronization or collaborative editing.
+
+Names/descriptions are removed by default; actual transactions are excluded by default. Amounts, categories and household structure remain. The user must consent before creating a link. The recipient sees a pending-copy banner and must confirm before replacing an existing local budget. Large snapshots use JSON rather than unreliable giant URLs.
+
+**Never upload a filled personal workbook, CSV or JSON backup into the public repository.** Only the empty/fictional templates are included here.
+
+GitHub Pages projects for the same owner share an origin; separate storage keys are not a security boundary against all same-origin apps. Normal hosting logs and third-party support-service processing are outside this app's control.
+
+## Offline / device installation
+
+`sw.js` caches only this app's assets in `homeflow-static-*` and controls only this project path. Other apps' caches are not deleted. First successful online caching is required. Browser eviction or clearing storage removes offline data. The Excel template is not pre-cached; download it while online. Dynamically generated CSV templates work offline.
+
+The separate standalone HTML has scripts, styles, icons, QR images and Excel template embedded and does not register a service worker. File-opening behavior on smartphones varies; the published HTTPS URL is the intended mobile experience.
+
+## Tests
+
+```
+node tests/engine.test.js
+node tests/package.test.js
+python tests/browser.test.py
+```
+
+The browser suite uses Playwright and Chromium, not required for end users. Read `QA_REPORT.md` for executed checks and limits. Financial formulas live independently in `engine.js`. UI and translations are in `app.js`; no external JavaScript libraries are loaded.
+
+## Background information
+
+- CFPB emergency-fund and cash-flow guide: https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/
+- CFPB income, benefits and spending toolkit: https://www.consumerfinance.gov/consumer-tools/educator-tools/your-money-your-goals/toolkit/
 - GitHub Pages: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
-- Storage events: https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event
-- Web Crypto encryption: https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
 
-External support links are opened only on user interaction. No payments are sent
-by this app. Lightning address is not an on-chain Bitcoin address.
+These are general educational references, not Greek tax rules, individualized recommendations, or endorsements of the app.
