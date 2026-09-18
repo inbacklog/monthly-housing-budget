@@ -14,6 +14,6 @@ images=[base64.b64decode(x) for x in re.findall(r'<img[^>]+src="data:image/png;b
 for name in EXPECTED:
     assert (BASE/'assets'/name).read_bytes() in images,name
     print('PASS standalone embeds original bytes:',name)
-assert 'homeflow-static-v1.4.0' in (BASE/'sw.js').read_text()
+assert 'homeflow-static-v1.5.1' in (BASE/'sw.js').read_text()
 print('PASS new asset cache version')
 print('5 QR-asset checks passed.')

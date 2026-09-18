@@ -1,26 +1,25 @@
-# Homeflow v1.5.0 — verification report
+# Homeflow v1.5.1 — QA Report
 
 ## Scope
-- Projection horizon moved to years: 1–50, default 10 years.
-- Quick presets: 5 / 10 / 20 / 30 years.
-- Internal model remains monthly for calculations and CSV export.
-- In-app projection table switches to annual snapshots above 5 years.
-- Added combined financial-position metric: available cash + emergency reserve + projected investments. It is explicitly not a full net-worth calculation.
-- Existing v1 local-storage budgets remain compatible.
 
-## Automated verification
-254 automated test groups/checks passed across calculation engine, packaging, QR assets, bilingual copy, v1.4 regression flows, v1.5 horizon behavior, scoped-entry UI, usability, row colouring, and drag/reordering.
+This update replaces the two static projection charts with explorable charts. Budget calculations, investment calculations, saved-data schema, imports, exports and shared-link format are unchanged.
 
-Key verified cases:
-- default horizon = 120 months / 10 years;
-- 50-year / 600-month horizon accepted and 601 months rejected;
-- 20-year view shows annual snapshots rather than 240 on-screen monthly rows;
-- full CSV export remains month-by-month;
-- investment return affects investment projection only, not household cash;
-- old browser data format and storage key remain unchanged;
-- notes, drag-and-drop, colours, contextual add controls and original supplied support QR assets continue to work.
+## What changed
 
-## Test environment / limitations
-- Browser UI tests: headless Chromium on desktop/mobile viewport simulations.
-- Not tested on a physical iPhone/Android device or against the live GitHub Pages deployment.
-- Long-term projections are deterministic scenarios based on the user's assumptions; they are not forecasts or probabilities.
+- Persistent exact-value readout below each chart.
+- Tooltip with exact values on hover, pointer movement or tap.
+- Crosshair and coloured markers for the selected month.
+- Keyboard exploration: Left/Right month by month, Home/End first/last point, Escape closes a pinned tooltip.
+- Clearer euro-formatted Y-axis labels and date ticks for long horizons.
+- Both cash scenarios and investment value/contributed capital are explorable.
+
+## Validation performed
+
+- 297 automated test groups/checks passed across the calculation engine, presets, ordering, copy, colours, usability, packaging, QR assets and standalone build.
+- A targeted Chromium interaction check confirmed that the cash and investment charts render, show exact euro values, respond to pointer movement and keyboard navigation, and keep the final-point readout visible.
+- JavaScript syntax checks passed for `app.js`, `engine.js` and `presets.js`.
+
+## Limitations
+
+- Browser interaction was checked in local Chromium, not on every physical Android/iPhone browser.
+- The charts remain deterministic illustrations based on the user's assumptions; they are not market forecasts or probabilities.

@@ -1,4 +1,15 @@
-# v1.5.0
+# Changelog
+
+## v1.5.1
+
+- Replaced the static projection SVGs with interactive charts.
+- Exact values appear in a persistent readout and in a tooltip on hover/tap.
+- Added crosshair and point markers for the selected month.
+- Added keyboard exploration with Left/Right arrows and Home/End.
+- Improved axis labels and tick formatting for long horizons.
+- No calculation, storage-schema, or sharing-format changes.
+
+# v1.5.1
 
 - Projection horizon is now set in years, 1–50, default 10 years.
 - Quick horizon presets: 5 / 10 / 20 / 30 years.

@@ -3,7 +3,10 @@ const assert=require('node:assert/strict'),E=require('../engine.js');let checks=
 function test(name,fn){try{fn();console.log('PASS '+name);checks++;}catch(e){console.error('FAIL '+name);throw e;}}
 function near(a,b){assert.ok(Math.abs(a-b)<1e-6,`${a} != ${b}`);}
 function line(overrides={}){return {id:E.id(),type:'expense',label:'Test',category:'housing',member:'',amount:120,frequency:'monthly',month:'',essential:true,subscription:false,active:true,funding:'cash',...overrides};}
-function plan(lines=[]){const p=E.blank('2026-01');p.lines=lines;return p;}
+function plan(lines=[]){const p=E.blank('2026-01');p.lines=lines;p.settings.horizon=12;return p;}
+test('Default projection horizon is ten years',()=>assert.equal(E.blank('2026-01').settings.horizon,120));
+test('Projection horizon accepts fifty years',()=>{const p=E.blank('2026-01');p.settings.horizon=600;assert.equal(E.forecast(E.validate(p)).length,600);});
+test('Projection horizon rejects more than fifty years',()=>{const p=E.blank('2026-01');p.settings.horizon=601;assert.throws(()=>E.validate(p));});
 test('Empty budget is zero and has one member',()=>{const p=E.blank();assert.equal(p.members.length,1);assert.equal(E.budget(p).income,0);assert.equal(E.budget(p).unassigned,0);});
 test('Monthly conversion',()=>near(E.equivalent(line(),'2026-01'),120));
 test('Yearly conversion',()=>near(E.equivalent(line({frequency:'yearly'}),'2026-01'),10));

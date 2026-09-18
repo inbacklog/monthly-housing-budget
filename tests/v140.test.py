@@ -44,7 +44,7 @@ with sync_playwright() as pw:
     check('Existing invested balance can be entered',page.locator('#investmentStart').count()==1)
     page.locator('#investmentStart').fill('10000')
     page.locator('#investmentReturn').fill('9')
-    page.locator('#horizon').fill('24')
+    page.locator('#horizonYears').fill('2')
     page.locator('#settingsForm button[type="submit"]').click()
     check('Future view shows chosen investment assumption','9%' in page.locator('#view').inner_text())
     check('Investment projection card is visible','Προβολή επενδύσεων' in page.locator('#view').inner_text())
@@ -52,14 +52,14 @@ with sync_playwright() as pw:
     link=page.locator('a[href*="wealth-goal-planner"]').get_attribute('href')
     check('Wealth Goal link carries starting balance and return','start=10000.00' in link and 'returnRate=9.00' in link)
     # Screenshot future desktop
-    page.screenshot(path=str(OUT/'Homeflow_v1.4_Future_Desktop.png'),full_page=False)
+    page.screenshot(path=str(OUT/'Homeflow_v1.5_Future_Desktop.png'),full_page=False)
 
     # Mobile plan / notes / household button.
     page.set_viewport_size({'width':390,'height':844})
     page.locator('[data-tab="plan"]').click()
     check('Plan remains within mobile viewport',page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))
-    page.screenshot(path=str(OUT/'Homeflow_v1.4_Plan_Mobile.png'),full_page=False)
-    check('No uncaught errors in v1.4 flows',errors==[])
+    page.screenshot(path=str(OUT/'Homeflow_v1.5_Plan_Mobile.png'),full_page=False)
+    check('No uncaught errors in v1.5 flows',errors==[])
     browser.close()
 
-print(f'\n{len(checks)} v1.4 UI checks passed.')
+print(f'\n{len(checks)} v1.5 UI checks passed.')
