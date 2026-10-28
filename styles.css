@@ -130,6 +130,9 @@ footer{padding-bottom:105px!important}
 @media(max-width:720px){.notes-head,.notes-cell{min-width:150px}.note-inline{min-width:135px}.investment-chart{height:220px}.household-btn{order:-1}.toolbar-actions{align-items:center}}
 @media(max-width:520px){.household-btn{font-size:11px!important;padding-inline:10px!important}.settings-block{padding:12px}.notes-head,.notes-cell{min-width:140px}.note-inline{min-width:125px}.entry-suggestions .quick-heading .hint{text-align:left;max-width:none}}
 
+.filter-summary{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin:10px 0;color:var(--muted);font-size:12px}
+.filter-summary p{margin:0}
+
 /* v1.5.1 — explorable projection charts */
 .chart{height:auto;min-height:0;margin:15px 0 4px}
 .interactive-chart{width:100%;min-width:0}

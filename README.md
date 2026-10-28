@@ -1,4 +1,13 @@
-# Homeflow v1.5.1
+# Homeflow v1.5.2
+
+## v1.5.2 highlights
+
+- Budget search now shows the number of matching entries, explains when filters hide all results, and offers **Clear filters**.
+- Valid saved budgets load even if display preferences are damaged.
+- CSV imports preserve completed months unless new actual transactions are added to those months. Plan-only imports keep all completion flags.
+- The offline cache is updated; the saved-data format and financial calculations are unchanged.
+
+See [v1.5.2 verification](QA_REPORT_v1.5.2.md) for the checks run for this update.
 
 ## v1.5.1 highlights
 
@@ -74,7 +83,7 @@ underlying expenses. Category tiles are computed summaries, not extra budget row
 2. Replace the website files with all files from this package in the same repo root.
 3. Keep the same repository, Pages path and storage. Do not clear browser site data.
 4. Commit the files and reopen/reload the published site after deployment.
-5. Check the footer says **v1.5.1**. The JSON schema and local-storage key are unchanged.
+5. Check the footer says **v1.5.2**. The JSON schema and local-storage key are unchanged.
 
 The package is complete, not a patch. No live repository was modified by creating it.
 
@@ -177,6 +186,7 @@ The separate standalone HTML has scripts, styles, icons, QR images and Excel tem
 
 ```
 node tests/engine.test.js
+node tests/startup.test.js
 node tests/presets.test.js
 node tests/package.test.js
 python tests/browser.test.py

@@ -95,7 +95,10 @@ function importCSV(input,base){const rows=parseCSV(input);if(!rows.length)throw 
   const item={id:id(),type:d.type,label:d.description,note:d.note||'',category:d.category,amount:Number(d.amount.replace(',','.')),member,funding:d.funding||'cash'};
   if(d.kind==='plan'){Object.assign(item,{frequency:d.frequency||'monthly',month:d.date,essential:yes(d.essential),subscription:yes(d.subscription),active:true});incoming.lines.push(item);}else{item.date=d.date;incoming.transactions.push(item);}
  }catch(e){throw Error('CSV row '+(i+2)+': '+e.message);}});
- p.lines.push(...incoming.lines);p.transactions.push(...incoming.transactions);const valid=validate(p);return {state:valid,lines:incoming.lines.length,transactions:incoming.transactions.length,newMembers};
+ p.lines.push(...incoming.lines);p.transactions.push(...incoming.transactions);const valid=validate(p);
+ const changedMonths=new Set(incoming.transactions.map(l=>l.date.slice(0,7)));
+ valid.closedMonths=valid.closedMonths.filter(month=>!changedMonths.has(month));
+ return {state:valid,lines:incoming.lines.length,transactions:incoming.transactions.length,newMembers};
 }
 function csvEscape(v){let s=String(v??'');if(/^[\s]*[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
 function exportCSV(p){const rows=[CSV_COLS];for(const kind of ['plan','actual'])for(const l of p[kind==='plan'?'lines':'transactions'].filter(l=>kind==='actual'||l.active))rows.push([kind,kind==='plan'?(l.month||''):l.date,l.type,l.label,l.category,l.amount,kind==='plan'?l.frequency:'',l.member?(p.members.find(m=>m.id===l.member)?.name||'Member '+(p.members.findIndex(m=>m.id===l.member)+1)):'',l.essential||false,l.subscription||false,l.funding,l.note||'']);return '\uFEFF'+rows.map(r=>r.map(csvEscape).join(',')).join('\r\n');}

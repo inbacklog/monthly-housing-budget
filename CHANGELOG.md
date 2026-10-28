@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.5.2 — 2026-10-29
+
+- Show visible/total budget entries, a clear filtered-empty state, and a Clear filters action that returns keyboard focus to search.
+- Localize the budget search and type-filter accessibility labels in Greek and English.
+- Restore valid saved budgets even when browser display preferences are malformed or unreadable.
+- Keep completed-month flags when importing planned entries; reopen only months receiving imported actual transactions.
+- Add regression checks for startup recovery and CSV completion flags; refresh the offline asset cache.
+- Preserve the saved-data schema and budget/projection calculations.
+
 ## v1.5.1
 
 - Replaced the static projection SVGs with interactive charts.
