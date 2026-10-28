@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.3 — 2026-10-29
+
+- Add Record actual to budget rows, with an editable transaction draft using the original per-period amount and existing duplicate protection. Saving opens Actuals; cancelling leaves the budget untouched.
+- Add a dismissible Undo notice for the last deleted entry. Restore its position and prior completed-month flag without changing the currently selected month. A later data change or reload ends undo availability.
+- Add a Current month shortcut beside month navigation.
+- Add 20 shortcut regression checks and update the offline cache; saved-data format and financial formulas remain unchanged.
+
 ## v1.5.2 — 2026-10-29
 
 - Show visible/total budget entries, a clear filtered-empty state, and a Clear filters action that returns keyboard focus to search.

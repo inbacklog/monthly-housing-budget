@@ -1,4 +1,13 @@
-# Homeflow v1.5.2
+# Homeflow v1.5.3
+
+## v1.5.3 highlights
+
+- **Record actual** on any budget row opens a new transaction with the original per-period amount, description, note, category, person and funding. Review its amount and date before saving. The budget row stays unchanged, and existing duplicate checks still apply.
+- **Undo** restores the last deleted budget entry or actual transaction in its original position. It also restores a transaction month's previous completion flag. Undo stays available across navigation and display changes until the next data change, page reload, dismissal, or another deletion.
+- **Current month** returns to this month's view with one click, without changing any entries.
+- Greek and English labels, mobile layouts and the offline cache are updated.
+
+See [v1.5.3 verification](QA_REPORT_v1.5.3.md) for this update's checks and limits.
 
 ## v1.5.2 highlights
 
@@ -83,7 +92,7 @@ underlying expenses. Category tiles are computed summaries, not extra budget row
 2. Replace the website files with all files from this package in the same repo root.
 3. Keep the same repository, Pages path and storage. Do not clear browser site data.
 4. Commit the files and reopen/reload the published site after deployment.
-5. Check the footer says **v1.5.2**. The JSON schema and local-storage key are unchanged.
+5. Check the footer says **v1.5.3**. The JSON schema and local-storage key are unchanged.
 
 The package is complete, not a patch. No live repository was modified by creating it.
 
@@ -187,6 +196,7 @@ The separate standalone HTML has scripts, styles, icons, QR images and Excel tem
 ```
 node tests/engine.test.js
 node tests/startup.test.js
+node tests/shortcuts.test.js
 node tests/presets.test.js
 node tests/package.test.js
 python tests/browser.test.py

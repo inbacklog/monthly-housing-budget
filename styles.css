@@ -130,6 +130,18 @@ footer{padding-bottom:105px!important}
 @media(max-width:720px){.notes-head,.notes-cell{min-width:150px}.note-inline{min-width:135px}.investment-chart{height:220px}.household-btn{order:-1}.toolbar-actions{align-items:center}}
 @media(max-width:520px){.household-btn{font-size:11px!important;padding-inline:10px!important}.settings-block{padding:12px}.notes-head,.notes-cell{min-width:140px}.note-inline{min-width:125px}.entry-suggestions .quick-heading .hint{text-align:left;max-width:none}}
 
+.month-select{flex-wrap:wrap}
+.month-select input{width:150px;flex:0 0 150px}
+.current-month{white-space:nowrap}
+.row-actions{flex-wrap:wrap;min-width:150px}
+.undo-notice{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:45;display:flex;align-items:center;gap:12px;max-width:min(550px,calc(100vw - 90px));padding:14px 16px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 30px #122e3026;font-size:12px}
+.undo-notice>div:first-child{min-width:0;overflow-wrap:anywhere}
+.undo-notice .buttons{flex-shrink:0}
+#undoMessage{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.undo-notice .hint{margin-top:4px;font-size:10px}
+.undo-notice:not([hidden])~.toast{bottom:180px}
+@media(max-width:520px){.current-month{margin-left:auto}.undo-notice{flex-wrap:wrap;gap:8px;padding:12px}.undo-notice .buttons{width:100%;justify-content:space-between}}
+@media print{.undo-notice{display:none!important}}
 .filter-summary{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin:10px 0;color:var(--muted);font-size:12px}
 .filter-summary p{margin:0}
 
