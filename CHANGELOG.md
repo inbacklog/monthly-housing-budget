@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.4 — 2026-10-29
+
+- Explain what projected available cash includes and excludes directly in its metric card, with expandable calculation help.
+- Add matching help for investment value and the combined figure, including its exclusion of new budget savings.
+- Clarify monthly remainder versus cumulative balances, annual table snapshots, opening cash and extra savings in Greek and English.
+- Refresh the offline cache. Financial formulas, amounts and saved data are unchanged.
+
 ## v1.5.3 — 2026-10-29
 
 - Add Record actual to budget rows, with an editable transaction draft using the original per-period amount and existing duplicate protection. Saving opens Actuals; cancelling leaves the budget untouched.

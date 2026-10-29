@@ -1,4 +1,13 @@
-# Homeflow v1.5.3
+# Homeflow v1.5.4
+
+## v1.5.4 highlights
+
+- Short explanations beside projection values clarify their time period, calculation and exclusions.
+- Expand **How is it calculated?** on the cash, investment and combined cards for details.
+- Settings and projection-table hints distinguish monthly flows, accumulated balances, reserve and new savings.
+- This is a copy/accessibility update; financial formulas and saved data are unchanged.
+
+See [v1.5.4 verification](QA_REPORT_v1.5.4.md) for the checks run.
 
 ## v1.5.3 highlights
 
@@ -92,7 +101,7 @@ underlying expenses. Category tiles are computed summaries, not extra budget row
 2. Replace the website files with all files from this package in the same repo root.
 3. Keep the same repository, Pages path and storage. Do not clear browser site data.
 4. Commit the files and reopen/reload the published site after deployment.
-5. Check the footer says **v1.5.3**. The JSON schema and local-storage key are unchanged.
+5. Check the footer says **v1.5.4**. The JSON schema and local-storage key are unchanged.
 
 The package is complete, not a patch. No live repository was modified by creating it.
 

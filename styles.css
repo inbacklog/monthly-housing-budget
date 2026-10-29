@@ -144,6 +144,9 @@ footer{padding-bottom:105px!important}
 @media print{.undo-notice{display:none!important}}
 .filter-summary{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin:10px 0;color:var(--muted);font-size:12px}
 .filter-summary p{margin:0}
+.metric-help{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:11px}
+.metric-help summary{cursor:pointer;color:var(--primary);font-weight:600;line-height:1.6}
+.metric-help p{margin-top:8px;color:var(--muted);line-height:1.8;font-size:11px}
 
 /* v1.5.1 — explorable projection charts */
 .chart{height:auto;min-height:0;margin:15px 0 4px}
